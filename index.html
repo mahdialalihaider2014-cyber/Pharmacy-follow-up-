@@ -3,36 +3,27 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#087f8c">
   <title>نظام متابعة مرضى الصيدلية</title>
 
   <style>
     :root {
       --primary: #087f8c;
-      --primary-dark: #066570;
-      --bg: #f3f7fa;
-      --card: #ffffff;
+      --background: #f3f7fa;
+      --border: #dce5eb;
       --text: #203040;
       --muted: #667788;
-      --border: #dce5eb;
-      --danger: #c62828;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
+      background: var(--background);
       color: var(--text);
       line-height: 1.6;
     }
-
-    button, input, textarea, select {
-      font: inherit;
-    }
-
+    button, input, textarea { font: inherit; }
     button {
       cursor: pointer;
       border: 0;
@@ -41,187 +32,113 @@
       background: var(--primary);
       color: white;
     }
-
-    button:hover { background: var(--primary-dark); }
-    button:disabled { opacity: .6; cursor: wait; }
-
+    button:disabled { opacity: .6; }
     .secondary { background: #e8f1f4; color: #174451; }
-    .danger { background: var(--danger); }
-    .small { padding: 6px 10px; font-size: 14px; }
-
+    .danger { background: #c62828; }
     header {
       background: var(--primary);
       color: white;
-      padding: 17px 4%;
+      padding: 16px 4%;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
-
     header h1 { margin: 0; font-size: 21px; }
-    header p { margin: 3px 0 0; font-size: 13px; opacity: .9; }
-
-    .header-actions {
+    header p { margin: 3px 0 0; font-size: 13px; }
+    .header-actions, .actions, .toolbar, .patient-actions {
       display: flex;
       gap: 8px;
-      align-items: center;
       flex-wrap: wrap;
     }
-
-    .header-actions button {
-      background: white;
-      color: var(--primary-dark);
-    }
-
-    main {
-      width: min(1100px, 94%);
-      margin: 22px auto;
-    }
-
+    .header-actions button { background: white; color: var(--primary); }
+    main { width: min(1050px, 94%); margin: 22px auto; }
     .card {
-      background: var(--card);
+      background: white;
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 20px;
+      padding: 18px;
       margin-bottom: 18px;
-      box-shadow: 0 3px 12px rgba(20, 50, 70, .035);
     }
-
-    h2 { font-size: 19px; margin: 0 0 15px; }
-    h3 { font-size: 16px; margin: 0 0 10px; }
-
+    h2 { margin: 0 0 15px; font-size: 19px; }
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      gap: 13px;
     }
-
     .field { display: flex; flex-direction: column; gap: 5px; }
-    .field.full { grid-column: 1 / -1; }
+    .full { grid-column: 1 / -1; }
     label { font-size: 14px; font-weight: 600; }
-
-    input, textarea, select {
+    input, textarea {
       width: 100%;
-      min-width: 0;
       padding: 11px;
       border: 1px solid #ccd8e0;
       border-radius: 9px;
       background: white;
       color: var(--text);
     }
-
-    input:focus, textarea:focus, select:focus {
-      outline: 2px solid #b5e4e7;
-      border-color: var(--primary);
-    }
-
     textarea { min-height: 85px; resize: vertical; }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 16px;
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
-
-    .toolbar input { flex: 1; min-width: 200px; }
-
+    .actions { margin-top: 15px; }
+    .toolbar { margin-bottom: 15px; }
+    .toolbar input { flex: 1; min-width: 190px; }
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
-
     .stat {
       background: white;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 15px;
+      padding: 13px;
+      overflow-wrap: anywhere;
     }
-
     .stat span { display: block; color: var(--muted); font-size: 13px; }
-    .stat strong { display: block; font-size: 24px; color: var(--primary); }
-
+    .stat strong { color: var(--primary); }
     .patient-list { display: grid; gap: 12px; }
-
     .patient {
       border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 14px;
+      border-radius: 10px;
+      padding: 13px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
     }
-
-    .patient-info { min-width: 0; flex: 1; }
-    .patient-info strong { display: block; overflow-wrap: anywhere; }
+    .patient-info { flex: 1; min-width: 180px; overflow-wrap: anywhere; }
+    .patient-info strong { display: block; }
     .muted { color: var(--muted); font-size: 13px; }
-    .patient-actions { display: flex; gap: 7px; flex-wrap: wrap; }
-
-    .empty, .message {
-      padding: 14px;
+    .message, .empty {
+      padding: 12px;
+      margin: 10px 0;
       border-radius: 9px;
       background: #eef5f7;
-      color: #385866;
-      margin: 10px 0;
-      overflow-wrap: anywhere;
-    }
-
-    .message.error { background: #ffebee; color: #9b1c1c; }
-    .message.success { background: #e7f6ed; color: #176638; }
-
-    .hidden { display: none !important; }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .profile-item {
-      border-bottom: 1px solid var(--border);
-      padding: 9px 0;
       overflow-wrap: anywhere;
       white-space: pre-wrap;
     }
-
-    .profile-item strong { display: block; font-size: 13px; color: var(--muted); }
-
-    #barcodeBox {
-      text-align: center;
-      padding: 15px 0;
+    .error { background: #ffebee; color: #9b1c1c; }
+    .success { background: #e7f6ed; color: #176638; }
+    .hidden { display: none !important; }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
-
-    #barcode { max-width: 100%; height: auto; }
-
-    footer {
-      text-align: center;
-      color: var(--muted);
-      padding: 18px;
-      font-size: 12px;
+    .profile-item {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
-
-    @media (max-width: 650px) {
-      .form-grid, .profile-grid { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: 1fr; }
-      .card { padding: 15px; }
-      header h1 { font-size: 18px; }
-      .patient { align-items: flex-start; }
-      .patient-actions { width: 100%; }
+    .profile-item strong { display: block; color: var(--muted); font-size: 13px; }
+    #barcodeBox { text-align: center; padding: 18px 0; }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 18px; }
+    @media (max-width: 600px) {
+      .form-grid, .profile-grid, .stats { grid-template-columns: 1fr; }
+      .card { padding: 14px; }
     }
-
     @media print {
       body * { visibility: hidden !important; }
       #printArea, #printArea * { visibility: visible !important; }
@@ -234,7 +151,6 @@
         background: white;
         color: black;
       }
-      .no-print { display: none !important; }
     }
   </style>
 </head>
@@ -243,7 +159,7 @@
 <header>
   <div>
     <h1 id="appTitle">نظام متابعة مرضى الصيدلية</h1>
-    <p id="appSubtitle">إدارة ملفات المرضى ومواعيد المراجعة</p>
+    <p id="subtitle">إدارة ملفات المرضى ومواعيد المراجعة</p>
   </div>
   <div class="header-actions">
     <button id="languageButton" type="button">English</button>
@@ -252,12 +168,11 @@
 </header>
 
 <main>
-  <div id="globalMessage" class="message hidden" role="status"></div>
+  <div id="message" class="message hidden" role="status"></div>
 
   <section id="loginSection" class="card">
     <h2 id="loginTitle">تسجيل الدخول</h2>
-    <p id="loginHint" class="muted">سجّل الدخول باستخدام حساب Firebase المصرح له.</p>
-
+    <p id="loginHint" class="muted">أدخل حساب Firebase المصرح له.</p>
     <form id="loginForm">
       <div class="form-grid">
         <div class="field full">
@@ -282,12 +197,8 @@
         <strong id="totalPatients">0</strong>
       </div>
       <div class="stat">
-        <span id="resultsLabel">نتائج البحث</span>
-        <strong id="resultCount">0</strong>
-      </div>
-      <div class="stat">
         <span id="accountLabel">الحساب الحالي</span>
-        <strong id="accountEmail" style="font-size:13px; overflow-wrap:anywhere;">—</strong>
+        <strong id="accountEmail">—</strong>
       </div>
     </div>
 
@@ -295,53 +206,44 @@
       <h2 id="formTitle">إضافة مريض جديد</h2>
       <form id="patientForm">
         <input id="patientId" type="hidden">
-
         <div class="form-grid">
           <div class="field">
             <label id="nameLabel" for="patientName">اسم المريض *</label>
-            <input id="patientName" required maxlength="150">
+            <input id="patientName" maxlength="150" required>
           </div>
-
           <div class="field">
             <label id="phoneLabel" for="patientPhone">رقم الهاتف *</label>
-            <input id="patientPhone" type="tel" required maxlength="30">
+            <input id="patientPhone" type="tel" maxlength="30" required>
           </div>
-
           <div class="field">
-            <label id="diseaseLabel" for="patientDisease">المرض المزمن</label>
-            <input id="patientDisease" maxlength="250">
+            <label id="diseaseLabel" for="disease">المرض المزمن</label>
+            <input id="disease" maxlength="250">
           </div>
-
           <div class="field">
-            <label id="barcodeLabel" for="patientBarcode">رقم الباركود (اختياري)</label>
+            <label id="barcodeLabel" for="patientBarcode">الباركود (اختياري)</label>
             <input id="patientBarcode" maxlength="100">
           </div>
-
           <div class="field">
             <label id="daysLabel" for="followUpDays">المراجعة بعد (أيام)</label>
             <input id="followUpDays" type="number" min="0" max="3650" value="30">
           </div>
-
           <div class="field">
             <label id="visitLabel" for="lastVisit">تاريخ آخر مراجعة</label>
             <input id="lastVisit" type="date">
           </div>
-
           <div class="field full">
-            <label id="medicinesLabel" for="patientMedicines">الأدوية والجرعات</label>
-            <textarea id="patientMedicines" maxlength="5000"></textarea>
+            <label id="medicinesLabel" for="medicines">الأدوية والجرعات</label>
+            <textarea id="medicines" maxlength="5000"></textarea>
           </div>
-
           <div class="field full">
-            <label id="notesLabel" for="patientNotes">ملاحظات</label>
-            <textarea id="patientNotes" maxlength="5000"></textarea>
+            <label id="notesLabel" for="notes">ملاحظات</label>
+            <textarea id="notes" maxlength="5000"></textarea>
           </div>
         </div>
-
         <div class="actions">
-          <button id="savePatientButton" type="submit">حفظ المريض</button>
-          <button id="cancelEditButton" class="secondary hidden" type="button">إلغاء التعديل</button>
-          <button id="clearFormButton" class="secondary" type="button">تفريغ الحقول</button>
+          <button id="saveButton" type="submit">حفظ المريض</button>
+          <button id="cancelButton" class="secondary hidden" type="button">إلغاء التعديل</button>
+          <button id="clearButton" class="secondary" type="button">تفريغ الحقول</button>
         </div>
       </form>
     </section>
@@ -349,48 +251,36 @@
     <section class="card">
       <h2 id="patientsTitle">ملفات المرضى</h2>
       <div class="toolbar">
-        <input id="searchInput" type="search"
-          placeholder="ابحث بالاسم أو الهاتف أو الباركود">
-        <button id="refreshButton" class="secondary" type="button">تحديث القائمة</button>
+        <input id="search" type="search" placeholder="بحث بالاسم أو الهاتف أو الباركود">
+        <button id="refreshButton" class="secondary" type="button">تحديث</button>
       </div>
-      <div id="patientList" class="patient-list">
-        <div class="empty" id="loadingText">جارٍ تحميل المرضى...</div>
-      </div>
+      <div id="patientList" class="patient-list"></div>
     </section>
 
     <section id="profileSection" class="card hidden">
       <h2 id="profileTitle">ملف المريض</h2>
       <div id="profileContent"></div>
-      <div id="barcodeBox">
-        <svg id="barcodeSvg"></svg>
-      </div>
-      <div class="actions no-print">
-        <button id="printProfileButton" type="button">طباعة الملف والباركود</button>
-        <button id="editProfileButton" class="secondary" type="button">تعديل البيانات</button>
-        <button id="closeProfileButton" class="secondary" type="button">إغلاق الملف</button>
+      <div id="barcodeBox"><svg id="barcodeSvg"></svg></div>
+      <div class="actions">
+        <button id="printButton" type="button">طباعة الملف والباركود</button>
+        <button id="editButton" class="secondary" type="button">تعديل</button>
+        <button id="closeProfileButton" class="secondary" type="button">إغلاق</button>
       </div>
     </section>
   </section>
 </main>
 
 <div id="printArea" class="hidden"></div>
-<footer id="footerText">بيانات المرضى خاصة. لا تشارك بيانات الدخول مع غير المخولين.</footer>
+<footer id="footerText">بيانات المرضى خاصة؛ لا تشارك بيانات الدخول مع غير المخولين.</footer>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
-<!-- Barcode -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <script>
 "use strict";
 
-/*
-  إعدادات Firebase الخاصة بمشروعك.
-  تأكد أن هذه البيانات تطابق إعدادات Firebase Console.
-*/
 const firebaseConfig = {
   apiKey: "AIzaSyDLu_X9iHY7xq1greKqRs2wJ3pva2iwM_Y",
   authDomain: "pharmacy-patients-follow-up.firebaseapp.com",
@@ -401,273 +291,130 @@ const firebaseConfig = {
 };
 
 const $ = id => document.getElementById(id);
-
-let auth = null;
-let db = null;
-let patients = [];
-let currentPatient = null;
+let auth, db, patients = [], selectedPatient = null;
 let language = localStorage.getItem("pharmacyLanguage") || "ar";
-let loadingPatients = false;
 
-const translations = {
+const words = {
   ar: {
-    title: "نظام متابعة مرضى الصيدلية",
-    subtitle: "إدارة ملفات المرضى ومواعيد المراجعة",
-    login: "تسجيل الدخول",
-    loginHint: "سجّل الدخول باستخدام حساب Firebase المصرح له.",
-    email: "البريد الإلكتروني",
-    password: "كلمة المرور",
-    signIn: "دخول",
-    logout: "تسجيل الخروج",
-    total: "إجمالي المرضى",
-    results: "نتائج البحث",
-    account: "الحساب الحالي",
-    addPatient: "إضافة مريض جديد",
-    editPatient: "تعديل بيانات المريض",
-    name: "اسم المريض",
-    phone: "رقم الهاتف",
-    disease: "المرض المزمن",
-    barcode: "رقم الباركود (اختياري)",
-    days: "المراجعة بعد (أيام)",
-    visit: "تاريخ آخر مراجعة",
-    medicines: "الأدوية والجرعات",
-    notes: "ملاحظات",
-    save: "حفظ المريض",
-    update: "حفظ التعديلات",
-    cancel: "إلغاء التعديل",
-    clear: "تفريغ الحقول",
-    patients: "ملفات المرضى",
-    search: "ابحث بالاسم أو الهاتف أو الباركود",
-    refresh: "تحديث القائمة",
-    loading: "جارٍ تحميل المرضى...",
-    noPatients: "لا توجد ملفات مرضى حتى الآن.",
-    noResults: "لا توجد نتائج مطابقة للبحث.",
-    view: "عرض الملف",
-    edit: "تعديل",
-    profile: "ملف المريض",
-    print: "طباعة الملف والباركود",
-    close: "إغلاق الملف",
-    totalPatients: "إجمالي المرضى",
-    required: "يرجى إدخال اسم المريض ورقم الهاتف.",
-    saved: "تم حفظ بيانات المريض بنجاح.",
-    updated: "تم تحديث بيانات المريض بنجاح.",
-    deleted: "تم حذف المريض.",
-    confirmDelete: "هل أنت متأكد من حذف ملف هذا المريض؟ لا يمكن التراجع عن ذلك.",
-    loginError: "تعذر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور.",
-    genericError: "حدث خطأ. تحقق من الاتصال وقواعد Firestore ثم حاول مرة أخرى.",
-    loadError: "تعذر تحميل المرضى. تحقق من قواعد Firestore وصلاحيات الحساب.",
-    logoutError: "تعذر تسجيل الخروج.",
-    loginRequired: "يرجى تسجيل الدخول أولاً.",
-    phoneLabel: "الهاتف",
-    diseaseLabel: "المرض المزمن",
-    barcodeLabel: "الباركود",
-    daysLabel: "أيام المتابعة",
-    visitLabel: "آخر مراجعة",
-    medicinesLabel: "الأدوية والجرعات",
-    notesLabel: "ملاحظات",
-    createdLabel: "تاريخ إنشاء الملف",
-    footer: "بيانات المرضى خاصة. لا تشارك بيانات الدخول مع غير المخولين.",
-    languageButton: "English",
-    noValue: "غير محدد",
-    printError: "تعذر إنشاء الباركود. تحقق من اتصال الإنترنت.",
-    saving: "جارٍ الحفظ...",
-    delete: "حذف",
-    missingBarcode: "لا يوجد باركود لهذا الملف."
+    title:"نظام متابعة مرضى الصيدلية", subtitle:"إدارة ملفات المرضى ومواعيد المراجعة",
+    login:"تسجيل الدخول", loginHint:"أدخل حساب Firebase المصرح له.",
+    email:"البريد الإلكتروني", password:"كلمة المرور", signIn:"دخول", logout:"تسجيل الخروج",
+    total:"إجمالي المرضى", account:"الحساب الحالي", add:"إضافة مريض جديد", editForm:"تعديل بيانات المريض",
+    name:"اسم المريض", phone:"رقم الهاتف", disease:"المرض المزمن", barcode:"الباركود (اختياري)",
+    days:"المراجعة بعد (أيام)", visit:"تاريخ آخر مراجعة", medicines:"الأدوية والجرعات", notes:"ملاحظات",
+    save:"حفظ المريض", update:"حفظ التعديلات", cancel:"إلغاء التعديل", clear:"تفريغ الحقول",
+    patients:"ملفات المرضى", search:"بحث بالاسم أو الهاتف أو الباركود", refresh:"تحديث",
+    loading:"جارٍ تحميل المرضى...", none:"لا توجد ملفات مرضى.", noResults:"لا توجد نتائج.",
+    view:"عرض الملف", edit:"تعديل", delete:"حذف", profile:"ملف المريض", print:"طباعة الملف والباركود",
+    close:"إغلاق", saved:"تم حفظ المريض بنجاح.", updated:"تم تحديث بيانات المريض.",
+    deleted:"تم حذف المريض.", required:"أدخل اسم المريض ورقم الهاتف.",
+    confirmDelete:"هل تريد حذف ملف هذا المريض نهائيًا؟",
+    footer:"بيانات المرضى خاصة؛ لا تشارك بيانات الدخول مع غير المخولين.",
+    languageButton:"English", noValue:"غير محدد", phoneLabel:"الهاتف",
+    diseaseLabel:"المرض المزمن", barcodeLabel:"الباركود", daysLabel:"أيام المتابعة",
+    visitLabel:"آخر مراجعة", medicinesLabel:"الأدوية والجرعات", notesLabel:"ملاحظات",
+    createdLabel:"تاريخ إنشاء الملف", generic:"حدث خطأ. راجع تفاصيل الخطأ أدناه.",
+    loginRequired:"يرجى تسجيل الدخول أولاً.", saving:"جارٍ الحفظ..."
   },
   en: {
-    title: "Pharmacy Patient Follow-up",
-    subtitle: "Manage patient records and follow-up",
-    login: "Sign in",
-    loginHint: "Sign in using an authorized Firebase account.",
-    email: "Email address",
-    password: "Password",
-    signIn: "Sign in",
-    logout: "Sign out",
-    total: "Total patients",
-    results: "Search results",
-    account: "Current account",
-    addPatient: "Add a new patient",
-    editPatient: "Edit patient details",
-    name: "Patient name",
-    phone: "Phone number",
-    disease: "Chronic condition",
-    barcode: "Barcode (optional)",
-    days: "Follow-up after (days)",
-    visit: "Last visit date",
-    medicines: "Medicines and doses",
-    notes: "Notes",
-    save: "Save patient",
-    update: "Save changes",
-    cancel: "Cancel edit",
-    clear: "Clear fields",
-    patients: "Patient records",
-    search: "Search by name, phone, or barcode",
-    refresh: "Refresh list",
-    loading: "Loading patients...",
-    noPatients: "No patient records yet.",
-    noResults: "No matching results.",
-    view: "View profile",
-    edit: "Edit",
-    profile: "Patient profile",
-    print: "Print profile and barcode",
-    close: "Close profile",
-    totalPatients: "Total patients",
-    required: "Please enter the patient name and phone number.",
-    saved: "Patient saved successfully.",
-    updated: "Patient updated successfully.",
-    deleted: "Patient deleted.",
-    confirmDelete: "Are you sure you want to delete this patient? This cannot be undone.",
-    loginError: "Sign-in failed. Check your email and password.",
-    genericError: "An error occurred. Check your connection and Firestore rules.",
-    loadError: "Could not load patients. Check Firestore rules and account permissions.",
-    logoutError: "Could not sign out.",
-    loginRequired: "Please sign in first.",
-    phoneLabel: "Phone",
-    diseaseLabel: "Chronic condition",
-    barcodeLabel: "Barcode",
-    daysLabel: "Follow-up days",
-    visitLabel: "Last visit",
-    medicinesLabel: "Medicines and doses",
-    notesLabel: "Notes",
-    createdLabel: "Record created",
-    footer: "Patient data is private. Do not share credentials with unauthorized people.",
-    languageButton: "العربية",
-    noValue: "Not specified",
-    printError: "Could not create barcode. Check your internet connection.",
-    saving: "Saving...",
-    delete: "Delete",
-    missingBarcode: "This record has no barcode.",
+    title:"Pharmacy Patient Follow-up", subtitle:"Manage patient records and follow-up",
+    login:"Sign in", loginHint:"Use an authorized Firebase account.",
+    email:"Email", password:"Password", signIn:"Sign in", logout:"Sign out",
+    total:"Total patients", account:"Current account", add:"Add patient", editForm:"Edit patient",
+    name:"Patient name", phone:"Phone number", disease:"Chronic condition", barcode:"Barcode (optional)",
+    days:"Follow-up after (days)", visit:"Last visit", medicines:"Medicines and doses", notes:"Notes",
+    save:"Save patient", update:"Save changes", cancel:"Cancel edit", clear:"Clear fields",
+    patients:"Patient records", search:"Search by name, phone, or barcode", refresh:"Refresh",
+    loading:"Loading patients...", none:"No patient records.", noResults:"No results found.",
+    view:"View profile", edit:"Edit", delete:"Delete", profile:"Patient profile", print:"Print profile and barcode",
+    close:"Close", saved:"Patient saved.", updated:"Patient updated.",
+    deleted:"Patient deleted.", required:"Enter patient name and phone.",
+    confirmDelete:"Permanently delete this patient?",
+    footer:"Patient data is private. Do not share credentials.",
+    languageButton:"العربية", noValue:"Not specified", phoneLabel:"Phone",
+    diseaseLabel:"Chronic condition", barcodeLabel:"Barcode", daysLabel:"Follow-up days",
+    visitLabel:"Last visit", medicinesLabel:"Medicines and doses", notesLabel:"Notes",
+    createdLabel:"Record created", generic:"An error occurred. See error details below.",
+    loginRequired:"Please sign in first.", saving:"Saving..."
   }
 };
 
-function t(key) {
-  return translations[language][key] || key;
+function t(k) { return words[language][k] || k; }
+
+function showMessage(text, type="") {
+  $("message").textContent = text;
+  $("message").className = "message" + (type ? " " + type : "");
+  $("message").classList.remove("hidden");
+}
+function clearMessage() { $("message").classList.add("hidden"); }
+
+function displayFirebaseError(error, context="") {
+  console.error("Firebase error:", context, error);
+  const code = error && error.code ? error.code : "unknown";
+  const detail = error && error.message ? error.message : String(error || "");
+  showMessage(
+    "رمز الخطأ: " + code + "\nالتفاصيل: " + detail +
+    (context ? "\nالمكان: " + context : ""),
+    "error"
+  );
 }
 
-function showMessage(message, type = "") {
-  const el = $("globalMessage");
-  el.textContent = message;
-  el.className = "message" + (type ? " " + type : "");
-  el.classList.remove("hidden");
-}
-
-function hideMessage() {
-  $("globalMessage").classList.add("hidden");
-}
-
-function setLanguage(nextLanguage) {
-  language = nextLanguage === "en" ? "en" : "ar";
+function setLanguage(next) {
+  language = next === "en" ? "en" : "ar";
   localStorage.setItem("pharmacyLanguage", language);
-
   document.documentElement.lang = language;
   document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
 
-  const textMap = {
-    appTitle: "title",
-    appSubtitle: "subtitle",
-    loginTitle: "login",
-    loginHint: "loginHint",
-    emailLabel: "email",
-    passwordLabel: "password",
-    loginButton: "signIn",
-    logoutButton: "logout",
-    totalLabel: "total",
-    resultsLabel: "results",
-    accountLabel: "account",
-    nameLabel: "name",
-    phoneLabel: "phone",
-    diseaseLabel: "disease",
-    barcodeLabel: "barcode",
-    daysLabel: "days",
-    visitLabel: "visit",
-    medicinesLabel: "medicines",
-    notesLabel: "notes",
-    savePatientButton: $("patientId").value ? "update" : "save",
-    cancelEditButton: "cancel",
-    clearFormButton: "clear",
-    patientsTitle: "patients",
-    refreshButton: "refresh",
-    profileTitle: "profile",
-    printProfileButton: "print",
-    editProfileButton: "edit",
-    closeProfileButton: "close",
-    footerText: "footer",
-    languageButton: "languageButton"
+  const map = {
+    appTitle:"title", subtitle:"subtitle", loginTitle:"login",
+    loginHint:"loginHint", emailLabel:"email", passwordLabel:"password",
+    loginButton:"signIn", logoutButton:"logout", totalLabel:"total",
+    accountLabel:"account", nameLabel:"name", phoneLabel:"phone",
+    diseaseLabel:"disease", barcodeLabel:"barcode", daysLabel:"days",
+    visitLabel:"visit", medicinesLabel:"medicines", notesLabel:"notes",
+    patientsTitle:"patients", refreshButton:"refresh", profileTitle:"profile",
+    printButton:"print", editButton:"edit", closeProfileButton:"close",
+    footerText:"footer", languageButton:"languageButton",
+    clearButton:"clear", cancelButton:"cancel"
   };
 
-  Object.keys(textMap).forEach(id => {
-    const el = $(id);
-    if (el) el.textContent = t(textMap[id]);
-  });
-
-  $("searchInput").placeholder = t("search");
-  $("patientList").setAttribute("aria-live", "polite");
-
-  if ($("patientId").value) {
-    $("formTitle").textContent = t("editPatient");
-  } else {
-    $("formTitle").textContent = t("addPatient");
-  }
-
-  if (patients.length || !loadingPatients) renderPatients();
-  if (currentPatient) showProfile(currentPatient, false);
+  for (const [id,key] of Object.entries(map)) $(id).textContent = t(key);
+  $("search").placeholder = t("search");
+  $("formTitle").textContent = $("patientId").value ? t("editForm") : t("add");
+  $("saveButton").textContent = $("patientId").value ? t("update") : t("save");
+  renderPatients();
+  if (selectedPatient) showProfile(selectedPatient, false);
 }
-
-$("languageButton").addEventListener("click", () => {
-  setLanguage(language === "ar" ? "en" : "ar");
-});
-
-function readableError(error) {
-  if (!error) return t("genericError");
-  if (error.code === "auth/invalid-credential" ||
-      error.code === "auth/wrong-password" ||
-      error.code === "auth/user-not-found") {
-    return t("loginError");
-  }
-  if (error.code === "permission-denied" ||
-      error.code === "firestore/permission-denied") {
-    return t("loadError");
-  }
-  return (error.message || t("genericError"));
-}
-
-function setBusy(button, busy, busyText) {
-  if (!button.dataset.originalText) {
-    button.dataset.originalText = button.textContent;
-  }
-  button.disabled = busy;
-  button.textContent = busy ? (busyText || t("saving")) : button.dataset.originalText;
-}
+$("languageButton").addEventListener("click", () => setLanguage(language === "ar" ? "en" : "ar"));
 
 function initFirebase() {
-  if (!window.firebase) {
-    showMessage("Firebase SDK لم يتم تحميله. تحقق من اتصال الإنترنت.", "error");
-    return false;
-  }
-
   try {
+    if (!window.firebase) {
+      showMessage("تعذر تحميل مكتبة Firebase. تحقق من اتصال الإنترنت.", "error");
+      return false;
+    }
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
     return true;
   } catch (error) {
-    console.error(error);
-    showMessage(readableError(error), "error");
+    displayFirebaseError(error, "تهيئة Firebase");
     return false;
   }
 }
 
 $("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
-  hideMessage();
+  clearMessage();
 
   if (!auth) {
-    showMessage(t("genericError"), "error");
+    showMessage("Firebase لم يبدأ بشكل صحيح. أعد تحميل الصفحة.", "error");
     return;
   }
 
   const button = $("loginButton");
-  setBusy(button, true, t("saving"));
+  button.disabled = true;
+  button.textContent = t("saving");
 
   try {
     await auth.signInWithEmailAndPassword(
@@ -676,10 +423,10 @@ $("loginForm").addEventListener("submit", async event => {
     );
     $("password").value = "";
   } catch (error) {
-    console.error(error);
-    showMessage(readableError(error), "error");
+    displayFirebaseError(error, "تسجيل الدخول");
   } finally {
-    setBusy(button, false);
+    button.disabled = false;
+    button.textContent = t("signIn");
   }
 });
 
@@ -687,7 +434,7 @@ $("logoutButton").addEventListener("click", async () => {
   try {
     await auth.signOut();
   } catch (error) {
-    showMessage(t("logoutError"), "error");
+    displayFirebaseError(error, "تسجيل الخروج");
   }
 });
 
@@ -697,7 +444,7 @@ function showSignedOut() {
   $("logoutButton").classList.add("hidden");
   $("accountEmail").textContent = "—";
   patients = [];
-  currentPatient = null;
+  selectedPatient = null;
   $("profileSection").classList.add("hidden");
   $("patientList").innerHTML = "";
 }
@@ -712,61 +459,28 @@ async function showSignedIn(user) {
 
 async function loadPatients() {
   if (!db || !auth || !auth.currentUser) return;
-
-  loadingPatients = true;
   $("patientList").innerHTML = '<div class="empty">' + t("loading") + '</div>';
 
   try {
     const snapshot = await db.collection("patients").get();
-    patients = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    patients.sort((a, b) =>
-      String(a.name || "").localeCompare(String(b.name || ""), language === "ar" ? "ar" : "en")
-    );
-
+    patients = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }));
+    patients.sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
     renderPatients();
+    clearMessage();
   } catch (error) {
-    console.error(error);
     $("patientList").innerHTML = "";
-    showMessage(t("loadError") + " " + readableError(error), "error");
-  } finally {
-    loadingPatients = false;
+    displayFirebaseError(error, "تحميل ملفات المرضى من Firestore");
   }
 }
 
-function escapeHTML(value) {
-  return String(value == null ? "" : value).replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  }[char]));
-}
-
-function getFilteredPatients() {
-  const query = $("searchInput").value.trim().toLocaleLowerCase();
-  if (!query) return patients;
-
-  return patients.filter(patient => {
-    const searchable = [
-      patient.name,
-      patient.phone,
-      patient.barcode,
-      patient.disease
-    ].map(value => String(value || "").toLocaleLowerCase());
-
-    return searchable.some(value => value.includes(query));
-  });
-}
-
 function renderPatients() {
-  $("totalPatients").textContent = String(patients.length);
-  const filtered = getFilteredPatients();
-  $("resultCount").textContent = String(filtered.length);
+  if (!$("patientList")) return;
+  $("totalPatients").textContent = patients.length;
+  const query = $("search").value.trim().toLocaleLowerCase();
+  const filtered = patients.filter(p =>
+    [p.name,p.phone,p.barcode,p.disease,p.id]
+      .some(v => String(v || "").toLocaleLowerCase().includes(query))
+  );
 
   const list = $("patientList");
   list.innerHTML = "";
@@ -774,315 +488,238 @@ function renderPatients() {
   if (!filtered.length) {
     const empty = document.createElement("div");
     empty.className = "empty";
-    empty.textContent = patients.length ? t("noResults") : t("noPatients");
+    empty.textContent = patients.length ? t("noResults") : t("none");
     list.appendChild(empty);
     return;
   }
 
-  filtered.forEach(patient => {
+  filtered.forEach(p => {
     const row = document.createElement("article");
     row.className = "patient";
-
     const info = document.createElement("div");
     info.className = "patient-info";
 
     const name = document.createElement("strong");
-    name.textContent = patient.name || t("noValue");
-
+    name.textContent = p.name || t("noValue");
     const phone = document.createElement("div");
     phone.className = "muted";
-    phone.textContent = t("phoneLabel") + ": " + (patient.phone || t("noValue"));
-
-    const disease = document.createElement("div");
-    disease.className = "muted";
-    disease.textContent = t("diseaseLabel") + ": " + (patient.disease || t("noValue"));
-
+    phone.textContent = t("phoneLabel") + ": " + (p.phone || t("noValue"));
     const barcode = document.createElement("div");
     barcode.className = "muted";
-    barcode.textContent = t("barcodeLabel") + ": " + (patient.barcode || patient.id);
-
-    info.append(name, phone, disease, barcode);
+    barcode.textContent = t("barcodeLabel") + ": " + (p.barcode || p.id);
+    info.append(name, phone, barcode);
 
     const actions = document.createElement("div");
     actions.className = "patient-actions";
 
-    const viewButton = document.createElement("button");
-    viewButton.className = "small";
-    viewButton.textContent = t("view");
-    viewButton.addEventListener("click", () => showProfile(patient));
+    const view = document.createElement("button");
+    view.className = "small";
+    view.textContent = t("view");
+    view.addEventListener("click", () => showProfile(p));
 
-    const editButton = document.createElement("button");
-    editButton.className = "small secondary";
-    editButton.textContent = t("edit");
-    editButton.addEventListener("click", () => fillForm(patient));
+    const edit = document.createElement("button");
+    edit.className = "small secondary";
+    edit.textContent = t("edit");
+    edit.addEventListener("click", () => fillForm(p));
 
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "small danger";
-    deleteButton.textContent = t("delete");
-    deleteButton.addEventListener("click", () => deletePatient(patient));
+    const del = document.createElement("button");
+    del.className = "small danger";
+    del.textContent = t("delete");
+    del.addEventListener("click", () => deletePatient(p));
 
-    actions.append(viewButton, editButton, deleteButton);
+    actions.append(view, edit, del);
     row.append(info, actions);
     list.appendChild(row);
   });
 }
 
-$("searchInput").addEventListener("input", renderPatients);
+$("search").addEventListener("input", renderPatients);
 $("refreshButton").addEventListener("click", loadPatients);
 
 function resetForm() {
   $("patientForm").reset();
   $("patientId").value = "";
   $("followUpDays").value = "30";
-  $("formTitle").textContent = t("addPatient");
-  $("savePatientButton").textContent = t("save");
-  $("cancelEditButton").classList.add("hidden");
-  currentPatient = null;
+  $("formTitle").textContent = t("add");
+  $("saveButton").textContent = t("save");
+  $("cancelButton").classList.add("hidden");
 }
 
-$("clearFormButton").addEventListener("click", resetForm);
-$("cancelEditButton").addEventListener("click", resetForm);
+$("clearButton").addEventListener("click", resetForm);
+$("cancelButton").addEventListener("click", resetForm);
 
-function fillForm(patient) {
-  $("patientId").value = patient.id;
-  $("patientName").value = patient.name || "";
-  $("patientPhone").value = patient.phone || "";
-  $("patientDisease").value = patient.disease || "";
-  $("patientBarcode").value = patient.barcode || patient.id;
-  $("followUpDays").value = Number(patient.followUpDays ?? 30);
-  $("lastVisit").value = patient.lastVisit || "";
-  $("patientMedicines").value = patient.medicines || "";
-  $("patientNotes").value = patient.notes || "";
-
-  $("formTitle").textContent = t("editPatient");
-  $("savePatientButton").textContent = t("update");
-  $("cancelEditButton").classList.remove("hidden");
-
+function fillForm(p) {
+  $("patientId").value = p.id;
+  $("patientName").value = p.name || "";
+  $("patientPhone").value = p.phone || "";
+  $("disease").value = p.disease || "";
+  $("patientBarcode").value = p.barcode || p.id;
+  $("followUpDays").value = Number(p.followUpDays ?? 30);
+  $("lastVisit").value = p.lastVisit || "";
+  $("medicines").value = p.medicines || "";
+  $("notes").value = p.notes || "";
+  $("formTitle").textContent = t("editForm");
+  $("saveButton").textContent = t("update");
+  $("cancelButton").classList.remove("hidden");
   $("profileSection").classList.add("hidden");
-  $("patientName").focus();
-  $("patientForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  $("patientForm").scrollIntoView({behavior:"smooth"});
 }
 
 $("patientForm").addEventListener("submit", async event => {
   event.preventDefault();
-  hideMessage();
-
+  clearMessage();
   if (!auth || !auth.currentUser) {
     showMessage(t("loginRequired"), "error");
     return;
   }
 
+  const id = $("patientId").value;
   const name = $("patientName").value.trim();
   const phone = $("patientPhone").value.trim();
-
   if (!name || !phone) {
     showMessage(t("required"), "error");
     return;
   }
 
-  const id = $("patientId").value;
-  const barcodeInput = $("patientBarcode").value.trim();
-
   const data = {
     name,
     phone,
-    disease: $("patientDisease").value.trim(),
-    barcode: barcodeInput,
+    disease: $("disease").value.trim(),
+    barcode: $("patientBarcode").value.trim(),
     followUpDays: Math.max(0, Number($("followUpDays").value || 0)),
     lastVisit: $("lastVisit").value,
-    medicines: $("patientMedicines").value.trim(),
-    notes: $("patientNotes").value.trim(),
+    medicines: $("medicines").value.trim(),
+    notes: $("notes").value.trim(),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  const button = $("savePatientButton");
-  setBusy(button, true, t("saving"));
+  const button = $("saveButton");
+  button.disabled = true;
+  button.textContent = t("saving");
 
   try {
     if (id) {
-      const existing = patients.find(patient => patient.id === id);
-      data.barcode = barcodeInput || (existing && existing.barcode) || id;
+      const old = patients.find(p => p.id === id);
+      data.barcode = data.barcode || (old && old.barcode) || id;
       await db.collection("patients").doc(id).update(data);
       showMessage(t("updated"), "success");
     } else {
       data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-
       const ref = await db.collection("patients").add(data);
-      if (!data.barcode) {
-        await ref.update({ barcode: ref.id });
-      }
+      if (!data.barcode) await ref.update({barcode:ref.id});
       showMessage(t("saved"), "success");
     }
 
     resetForm();
     await loadPatients();
   } catch (error) {
-    console.error(error);
-    showMessage(readableError(error), "error");
+    displayFirebaseError(error, "حفظ بيانات المريض");
   } finally {
-    setBusy(button, false);
+    button.disabled = false;
+    button.textContent = $("patientId").value ? t("update") : t("save");
   }
 });
 
-async function deletePatient(patient) {
+async function deletePatient(p) {
   if (!confirm(t("confirmDelete"))) return;
-  if (!auth || !auth.currentUser) {
-    showMessage(t("loginRequired"), "error");
-    return;
-  }
-
   try {
-    await db.collection("patients").doc(patient.id).delete();
-
-    if (currentPatient && currentPatient.id === patient.id) {
-      currentPatient = null;
+    await db.collection("patients").doc(p.id).delete();
+    if (selectedPatient && selectedPatient.id === p.id) {
+      selectedPatient = null;
       $("profileSection").classList.add("hidden");
     }
-
-    if ($("patientId").value === patient.id) resetForm();
-
     showMessage(t("deleted"), "success");
     await loadPatients();
   } catch (error) {
-    console.error(error);
-    showMessage(readableError(error), "error");
+    displayFirebaseError(error, "حذف المريض");
   }
 }
 
-function formatDate(value) {
-  if (!value) return t("noValue");
-  return value;
-}
-
-function showProfile(patient, scroll = true) {
-  currentPatient = patient;
-
-  const items = [
-    [t("name"), patient.name],
-    [t("phoneLabel"), patient.phone],
-    [t("diseaseLabel"), patient.disease],
-    [t("barcodeLabel"), patient.barcode || patient.id],
-    [t("daysLabel"), patient.followUpDays],
-    [t("visitLabel"), formatDate(patient.lastVisit)],
-    [t("medicinesLabel"), patient.medicines],
-    [t("notesLabel"), patient.notes]
+function showProfile(p, scroll=true) {
+  selectedPatient = p;
+  const fields = [
+    [t("name"),p.name], [t("phoneLabel"),p.phone],
+    [t("diseaseLabel"),p.disease], [t("barcodeLabel"),p.barcode || p.id],
+    [t("daysLabel"),p.followUpDays], [t("visitLabel"),p.lastVisit],
+    [t("medicinesLabel"),p.medicines], [t("notesLabel"),p.notes]
   ];
 
-  const content = $("profileContent");
-  content.innerHTML = "";
   const grid = document.createElement("div");
   grid.className = "profile-grid";
-
-  items.forEach(([label, value]) => {
+  fields.forEach(([label,value]) => {
     const item = document.createElement("div");
     item.className = "profile-item";
-
-    const title = document.createElement("strong");
-    title.textContent = label;
-
-    const text = document.createElement("div");
-    text.textContent = value === undefined || value === null || value === ""
-      ? t("noValue")
-      : String(value);
-
-    item.append(title, text);
+    const strong = document.createElement("strong");
+    strong.textContent = label;
+    const content = document.createElement("div");
+    content.textContent = value === undefined || value === null || value === ""
+      ? t("noValue") : String(value);
+    item.append(strong,content);
     grid.appendChild(item);
   });
+  $("profileContent").replaceChildren(grid);
 
-  content.appendChild(grid);
-
-  const barcodeValue = String(patient.barcode || patient.id || "").trim();
   const svg = $("barcodeSvg");
   svg.innerHTML = "";
-
-  if (barcodeValue && window.JsBarcode) {
-    try {
-      JsBarcode(svg, barcodeValue, {
-        format: "CODE128",
-        displayValue: true,
-        height: 65,
-        margin: 8,
-        fontSize: 14
-      });
-    } catch (error) {
-      console.error(error);
-      showMessage(t("printError"), "error");
-    }
-  } else {
-    showMessage(t("printError"), "error");
+  try {
+    if (!window.JsBarcode) throw new Error("Barcode library unavailable");
+    JsBarcode(svg, String(p.barcode || p.id), {
+      format:"CODE128", displayValue:true, height:60, margin:8
+    });
+  } catch (error) {
+    displayFirebaseError(error, "إنشاء الباركود");
   }
 
   $("profileSection").classList.remove("hidden");
-  if (scroll) {
-    $("profileSection").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+  if (scroll) $("profileSection").scrollIntoView({behavior:"smooth"});
 }
 
-$("editProfileButton").addEventListener("click", () => {
-  if (currentPatient) fillForm(currentPatient);
+$("editButton").addEventListener("click", () => {
+  if (selectedPatient) fillForm(selectedPatient);
 });
-
 $("closeProfileButton").addEventListener("click", () => {
   $("profileSection").classList.add("hidden");
 });
 
-$("printProfileButton").addEventListener("click", () => {
-  if (!currentPatient) return;
-
-  const patient = currentPatient;
-  const barcodeSvg = $("barcodeSvg").outerHTML;
-  const labels = [
-    [t("name"), patient.name],
-    [t("phoneLabel"), patient.phone],
-    [t("diseaseLabel"), patient.disease],
-    [t("barcodeLabel"), patient.barcode || patient.id],
-    [t("daysLabel"), patient.followUpDays],
-    [t("visitLabel"), patient.lastVisit],
-    [t("medicinesLabel"), patient.medicines],
-    [t("notesLabel"), patient.notes]
-  ];
-
-  const printable = $("printArea");
-  printable.innerHTML = "";
-
+$("printButton").addEventListener("click", () => {
+  if (!selectedPatient) return;
+  const p = selectedPatient;
+  const area = $("printArea");
+  area.innerHTML = "";
   const title = document.createElement("h2");
   title.textContent = t("profile");
-  printable.appendChild(title);
+  area.appendChild(title);
 
-  labels.forEach(([label, value]) => {
-    const p = document.createElement("p");
-    const strong = document.createElement("strong");
-    strong.textContent = label + ": ";
-    p.appendChild(strong);
-    p.appendChild(document.createTextNode(
-      value === undefined || value === null || value === ""
-        ? t("noValue")
-        : String(value)
-    ));
-    printable.appendChild(p);
+  [
+    [t("name"),p.name],[t("phoneLabel"),p.phone],
+    [t("diseaseLabel"),p.disease],[t("barcodeLabel"),p.barcode || p.id],
+    [t("daysLabel"),p.followUpDays],[t("visitLabel"),p.lastVisit],
+    [t("medicinesLabel"),p.medicines],[t("notesLabel"),p.notes]
+  ].forEach(([label,value]) => {
+    const pEl = document.createElement("p");
+    const b = document.createElement("strong");
+    b.textContent = label + ": ";
+    pEl.append(b, document.createTextNode(value == null ? "" : String(value)));
+    area.appendChild(pEl);
   });
 
-  const barcodeWrap = document.createElement("div");
-  barcodeWrap.style.textAlign = "center";
-  barcodeWrap.innerHTML = barcodeSvg;
-  printable.appendChild(barcodeWrap);
+  const barcode = document.createElement("div");
+  barcode.style.textAlign = "center";
+  barcode.innerHTML = $("barcodeSvg").outerHTML;
+  area.appendChild(barcode);
 
-  printable.classList.remove("hidden");
+  area.classList.remove("hidden");
   window.print();
-  setTimeout(() => printable.classList.add("hidden"), 500);
+  setTimeout(() => area.classList.add("hidden"), 700);
 });
 
 setLanguage(language);
 
 if (initFirebase()) {
-  auth.onAuthStateChanged(async user => {
-    hideMessage();
-
-    if (user) {
-      await showSignedIn(user);
-    } else {
-      showSignedOut();
-    }
+  auth.onAuthStateChanged(user => {
+    clearMessage();
+    if (user) showSignedIn(user);
+    else showSignedOut();
   });
 }
 </script>
