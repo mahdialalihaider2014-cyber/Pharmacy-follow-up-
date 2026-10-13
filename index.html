@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -44,6 +43,7 @@ button:disabled{opacity:.55;cursor:wait}
 .notice{padding:11px 13px;border-radius:10px;margin:10px 0;background:#edf7f8}
 .notice.error{background:#fff0ee;color:#8b1e16}
 .notice.success{background:#eaf8ef;color:#17633b}
+.inventory-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 #barcodeWrap{text-align:center;padding:14px;background:white;border:1px dashed var(--border);border-radius:12px;margin-top:12px}
 #barcodeSvg{max-width:100%;height:auto}
 footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 26px}
@@ -139,6 +139,10 @@ body *{visibility:hidden!important}
             <label for="lastVisit" data-ar="تاريخ آخر مراجعة" data-en="Last visit">تاريخ آخر مراجعة</label>
             <input id="lastVisit" type="date">
           </div>
+          <div class="field">
+            <label for="nextVisit" data-ar="موعد المراجعة القادمة (تلقائي)" data-en="Next visit (auto)">موعد المراجعة القادمة (تلقائي)</label>
+            <input id="nextVisit" type="date">
+          </div>
           <div class="field full">
             <label for="medicines" data-ar="الأدوية" data-en="Medicines">الأدوية</label>
             <textarea id="medicines"></textarea>
@@ -160,6 +164,14 @@ body *{visibility:hidden!important}
       <div class="toolbar">
         <input id="search" placeholder="ابحث بالاسم أو الهاتف أو الباركود">
         <span id="patientCount" class="muted"></span>
+      </div>
+      <div class="inventory-filters" id="inventoryFilters">
+        <button class="small secondary" data-filter="all">الكل</button>
+        <button class="small secondary" data-filter="0">مراجعات اليوم</button>
+        <button class="small secondary" data-filter="3">متبقي ≤ 3 أيام</button>
+        <button class="small secondary" data-filter="7">متبقي ≤ 7 أيام</button>
+        <button class="small secondary" data-filter="30">متبقي ≤ 30 يوماً</button>
+        <button class="small danger" data-filter="overdue">متأخرون</button>
       </div>
       <div id="patientList" class="patient-list"></div>
       <p id="emptyState" class="muted hidden">لا توجد نتائج.</p>
@@ -187,7 +199,7 @@ body *{visibility:hidden!important}
 
     <section id="settingsSection" class="card hidden">
       <h2>إعدادات المدير</h2>
-      <p class="muted">تُحفظ الإعدادات في Firestore. إعداد الإرسال التلقائي هنا لا يشغّل الإرسال وحده؛ يلزم خادم خلفي آمن وربط WhatsApp Business API.</p>
+      <p class="muted">تُحفظ الإعدادات في Firestore.</p>
       <div class="grid">
         <div class="field full">
           <label><input id="settingBarcode" type="checkbox" checked> تفعيل أدوات الباركود والطباعة</label>
@@ -196,34 +208,9 @@ body *{visibility:hidden!important}
           <label><input id="settingWhatsapp" type="checkbox" checked> تفعيل زر التواصل عبر واتساب</label>
         </div>
         <div class="field full">
-          <label><input id="settingAutoSend" type="checkbox"> طلب تفعيل الإرسال التلقائي (يتطلب إعداد الخادم)</label>
-        </div>
-        <div class="field">
-          <label for="settingSendTime">وقت الإرسال</label>
-          <input id="settingSendTime" type="time" value="09:00">
-        </div>
-        <div class="field">
-          <label for="settingReminderDays">التذكير قبل المراجعة (أيام)</label>
-          <input id="settingReminderDays" type="number" min="0" max="30" value="1">
-        </div>
-        <div class="field">
-          <label for="settingLeadHours">تنبيه المدير قبل الإرسال (ساعات)</label>
-          <input id="settingLeadHours" type="number" min="0" max="168" value="24">
-        </div>
-        <div class="field full">
           <label for="settingMessageTemplate">نص رسالة واتساب</label>
-          <textarea id="settingMessageTemplate">مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية بتاريخ {date}. للاستفسار يرجى التواصل معنا.</textarea>
-          <p class="muted">المتغيرات: {name} اسم المريض، {date} تاريخ المراجعة.</p>
-        </div>
-        <div class="field full">
-          <label><input id="settingMedicineInventory" type="checkbox"> إظهار/تفعيل قسم جرد الأدوية (واجهة الإعداد قيد التجهيز)</label>
-        </div>
-        <div class="field">
-          <label for="settingStockMinimum">حد تنبيه المخزون</label>
-          <input id="settingStockMinimum" type="number" min="0" value="5">
-        </div>
-        <div class="field full">
-          <label><input id="settingAppointmentInventory" type="checkbox" checked> إظهار/تفعيل إعدادات جرد المواعيد</label>
+          <textarea id="settingMessageTemplate">مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية القادم بتاريخ {date}. للاستفسار يرجى التواصل معنا.</textarea>
+          <p class="muted">المتغيرات: {name} اسم المريض، {date} موعد المراجعة القادمة.</p>
         </div>
       </div>
       <div class="actions">
@@ -264,18 +251,12 @@ let currentUser = null;
 let patients = [];
 let selectedPatient = null;
 let language = "ar";
+let currentFilter = "all";
 
 let appSettings = {
   barcodeEnabled: true,
   whatsappEnabled: true,
-  autoSendEnabled: false,
-  sendTime: "09:00",
-  reminderDays: 1,
-  leadHours: 24,
-  messageTemplate: "مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية بتاريخ {date}. للاستفسار يرجى التواصل معنا.",
-  medicineInventoryEnabled: false,
-  appointmentInventoryEnabled: true,
-  stockMinimum: 5
+  messageTemplate: "مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية القادم بتاريخ {date}. للاستفسار يرجى التواصل معنا."
 };
 
 const translations = {
@@ -298,6 +279,7 @@ const translations = {
     barcode:"الباركود",
     days:"أيام المتابعة",
     visit:"تاريخ آخر مراجعة",
+    nextVisit:"موعد المراجعة القادمة",
     medicines:"الأدوية",
     notes:"ملاحظات",
     save:"حفظ المريض",
@@ -339,6 +321,7 @@ const translations = {
     barcode:"Barcode",
     days:"Follow-up days",
     visit:"Last visit",
+    nextVisit:"Next visit",
     medicines:"Medicines",
     notes:"Notes",
     save:"Save patient",
@@ -364,8 +347,7 @@ const translations = {
 };
 
 function t(key) {
-  return (translations[language] && translations[language][key]) ||
-         translations.ar[key] || key;
+  return (translations[language] && translations[language][key]) || translations.ar[key] || key;
 }
 
 function showMessage(text, type = "") {
@@ -381,25 +363,15 @@ function clearMessage() {
 
 function displayError(error, action) {
   console.error(action, error);
-  const code = error && error.code ? error.code : "";
   let details = error && error.message ? error.message : String(error);
-
-  if (code === "permission-denied") {
-    details = "رفضت قواعد Firestore العملية. تحقق من قواعد المرضى/الإعدادات وموافقة المستخدم.";
-  }
-  if (code === "auth/invalid-credential" ||
-      code === "auth/wrong-password" ||
-      code === "auth/user-not-found") {
-    details = "بيانات تسجيل الدخول غير صحيحة.";
+  if (error && error.code === "permission-denied") {
+    details = "رفضت قواعد Firestore العملية.";
   }
   showMessage(action + " — " + details, "error");
 }
 
 function isAdmin() {
-  return !!(
-    currentUser &&
-    String(currentUser.email || "").toLowerCase() === ADMIN_EMAIL.toLowerCase()
-  );
+  return !!(currentUser && String(currentUser.email || "").toLowerCase() === ADMIN_EMAIL.toLowerCase());
 }
 
 function initFirebase() {
@@ -413,6 +385,24 @@ function initFirebase() {
     return false;
   }
 }
+
+function calculateNextVisit() {
+  const lastVisitVal = $("lastVisit").value;
+  const daysVal = parseInt($("followUpDays").value) || 0;
+  if (!lastVisitVal) return;
+  
+  const date = new Date(lastVisitVal);
+  date.setDate(date.getDate() + daysVal);
+  
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  
+  $("nextVisit").value = `${year}-${month}-${day}`;
+}
+
+$("lastVisit").addEventListener("change", calculateNextVisit);
+$("followUpDays").addEventListener("input", calculateNextVisit);
 
 function toggleLanguage() {
   language = language === "ar" ? "en" : "ar";
@@ -478,12 +468,10 @@ $("loginButton").addEventListener("click", async () => {
   clearMessage();
   const email = $("email").value.trim();
   const password = $("password").value;
-
   if (!email || !password) {
     showMessage("أدخل البريد الإلكتروني وكلمة المرور.", "error");
     return;
   }
-
   $("loginButton").disabled = true;
   try {
     await auth.signInWithEmailAndPassword(email, password);
@@ -498,16 +486,13 @@ $("logoutButton").addEventListener("click", () => auth.signOut());
 
 async function loadPatients() {
   if (!db || !currentUser) return;
-
   $("patientList").innerHTML = "";
   $("emptyState").classList.add("hidden");
 
   try {
     const snap = await db.collection("patients").get();
     patients = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    patients.sort((a, b) =>
-      String(a.name || "").localeCompare(String(b.name || ""), "ar")
-    );
+    patients.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"));
     renderPatients();
   } catch (e) {
     displayError(e, "تحميل ملفات المرضى");
@@ -519,11 +504,27 @@ function renderPatients() {
   list.innerHTML = "";
 
   const q = $("search").value.trim().toLocaleLowerCase();
-  const filtered = patients.filter(p =>
-    [p.name, p.phone, p.barcode, p.id, p.disease].some(v =>
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const filtered = patients.filter(p => {
+    const matchesSearch = [p.name, p.phone, p.barcode, p.id, p.disease].some(v =>
       String(v || "").toLocaleLowerCase().includes(q)
-    )
-  );
+    );
+    if (!matchesSearch) return false;
+
+    if (currentFilter === "all") return true;
+
+    if (!p.nextVisit) return false;
+    const nextDate = new Date(p.nextVisit);
+    nextDate.setHours(0, 0, 0, 0);
+    const diffTime = nextDate - today;
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+    if (currentFilter === "overdue") return diffDays < 0;
+    const filterDaysNum = parseInt(currentFilter);
+    return diffDays >= 0 && diffDays <= filterDaysNum;
+  });
 
   $("patientCount").textContent = filtered.length + " / " + patients.length;
   $("emptyState").classList.toggle("hidden", filtered.length !== 0);
@@ -541,11 +542,11 @@ function renderPatients() {
     const phone = document.createElement("span");
     phone.textContent = p.phone || "";
 
-    const code = document.createElement("div");
-    code.className = "muted";
-    code.textContent = t("barcode") + ": " + (p.barcode || p.id);
+    const details = document.createElement("div");
+    details.className = "muted";
+    details.textContent = `${t("nextVisit")}: ${p.nextVisit || "—"} | ${t("barcode")}: ${p.barcode || p.id}`;
 
-    info.append(name, phone, code);
+    info.append(name, phone, details);
 
     const actions = document.createElement("div");
     actions.className = "patient-actions";
@@ -575,6 +576,15 @@ function renderPatients() {
   });
 }
 
+document.querySelectorAll("#inventoryFilters button").forEach(btn => {
+  btn.addEventListener("click", e => {
+    document.querySelectorAll("#inventoryFilters button").forEach(b => b.classList.add("secondary"));
+    btn.classList.remove("secondary");
+    currentFilter = btn.dataset.filter;
+    renderPatients();
+  });
+});
+
 $("search").addEventListener("input", renderPatients);
 $("refreshButton").addEventListener("click", loadPatients);
 
@@ -588,6 +598,9 @@ function resetPatientForm() {
   $("patientForm").reset();
   $("patientId").value = "";
   $("followUpDays").value = "30";
+  const todayStr = new Date().toISOString().split('T')[0];
+  $("lastVisit").value = todayStr;
+  calculateNextVisit();
   $("patientFormTitle").textContent = t("add");
   $("savePatientButton").textContent = t("save");
   $("patientFormCard").classList.add("hidden");
@@ -603,11 +616,11 @@ function fillPatientForm(p) {
   $("patientBarcode").value = p.barcode || "";
   $("followUpDays").value = Number(p.followUpDays ?? 30);
   $("lastVisit").value = p.lastVisit || "";
+  $("nextVisit").value = p.nextVisit || "";
   $("medicines").value = p.medicines || "";
   $("notes").value = p.notes || "";
 
-  $("patientFormTitle").textContent =
-    language === "ar" ? "تعديل بيانات المريض" : "Edit patient";
+  $("patientFormTitle").textContent = language === "ar" ? "تعديل بيانات المريض" : "Edit patient";
   $("savePatientButton").textContent = t("update");
   $("patientFormCard").classList.remove("hidden");
   $("profileSection").classList.add("hidden");
@@ -640,6 +653,7 @@ $("patientForm").addEventListener("submit", async e => {
     barcode: $("patientBarcode").value.trim() || (old && old.barcode) || "",
     followUpDays: Math.max(0, Number($("followUpDays").value || 0)),
     lastVisit: $("lastVisit").value,
+    nextVisit: $("nextVisit").value,
     medicines: $("medicines").value.trim(),
     notes: $("notes").value.trim(),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -680,6 +694,7 @@ function showProfile(p) {
     [t("barcode"), p.barcode || p.id],
     [t("days"), p.followUpDays],
     [t("visit"), p.lastVisit],
+    [t("nextVisit"), p.nextVisit],
     [t("medicines"), p.medicines],
     [t("notes"), p.notes]
   ];
@@ -695,8 +710,7 @@ function showProfile(p) {
     strong.textContent = label;
 
     const val = document.createElement("div");
-    val.textContent =
-      value === undefined || value === null || value === "" ? "—" : String(value);
+    val.textContent = value === undefined || value === null || value === "" ? "—" : String(value);
 
     item.append(strong, val);
     grid.append(item);
@@ -706,16 +720,12 @@ function showProfile(p) {
   renderBarcode(p.barcode || p.id);
 
   $("profileSection").classList.remove("hidden");
-  $("generateBarcodeButton").classList.toggle("hidden", !appSettings.barcodeEnabled);
-  $("printBarcodeButton").classList.toggle("hidden", !appSettings.barcodeEnabled);
-  $("whatsappButton").classList.toggle("hidden", !appSettings.whatsappEnabled);
   $("profileSection").scrollIntoView({ behavior: "smooth" });
 }
 
 function renderBarcode(value) {
   const svg = $("barcodeSvg");
   svg.innerHTML = "";
-
   try {
     if (!window.JsBarcode) throw new Error("Barcode library not loaded");
     JsBarcode(svg, String(value), {
@@ -753,7 +763,6 @@ $("deletePatientButton").addEventListener("click", async () => {
 
 $("generateBarcodeButton").addEventListener("click", async () => {
   if (!selectedPatient || !currentUser) return;
-
   try {
     const ref = db.collection("patients").doc(selectedPatient.id);
     const snap = await ref.get();
@@ -768,15 +777,9 @@ $("generateBarcodeButton").addEventListener("click", async () => {
     }
 
     selectedPatient = { ...selectedPatient, barcode: code };
-    patients = patients.map(p =>
-      p.id === selectedPatient.id ? selectedPatient : p
-    );
-
+    patients = patients.map(p => p.id === selectedPatient.id ? selectedPatient : p);
     showProfile(selectedPatient);
-    showMessage(
-      existing ? "تم الاحتفاظ بالباركود القديم نفسه." : "تم حفظ باركود ثابت للمريض.",
-      "success"
-    );
+    showMessage("تم حفظ باركود المريض بنجاح.", "success");
   } catch (e) {
     displayError(e, "حفظ باركود المريض");
   }
@@ -784,13 +787,10 @@ $("generateBarcodeButton").addEventListener("click", async () => {
 
 $("printBarcodeButton").addEventListener("click", () => {
   if (!selectedPatient) return;
-
   const area = $("printArea");
   area.innerHTML = "";
-
   const h = document.createElement("h3");
   h.textContent = selectedPatient.name || "";
-
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   area.append(h, svg);
 
@@ -813,10 +813,8 @@ $("printBarcodeButton").addEventListener("click", () => {
 
 $("printProfileButton").addEventListener("click", () => {
   if (!selectedPatient) return;
-
   const area = $("printArea");
   area.innerHTML = "";
-
   const h = document.createElement("h2");
   h.textContent = t("profile");
   area.append(h);
@@ -828,6 +826,7 @@ $("printProfileButton").addEventListener("click", () => {
     [t("barcode"), selectedPatient.barcode || selectedPatient.id],
     [t("days"), selectedPatient.followUpDays],
     [t("visit"), selectedPatient.lastVisit],
+    [t("nextVisit"), selectedPatient.nextVisit],
     [t("medicines"), selectedPatient.medicines],
     [t("notes"), selectedPatient.notes]
   ].forEach(([k, v]) => {
@@ -862,33 +861,25 @@ function openWhatsApp(p) {
   }
 
   let phone = String(p.phone).replace(/\D/g, "");
-
   if (phone.startsWith("00")) phone = phone.slice(2);
   else if (phone.startsWith("0")) phone = "964" + phone.slice(1);
   else if (phone.startsWith("7")) phone = "964" + phone;
 
-  const date = p.nextVisit || p.lastVisit || "";
-  const template = appSettings.messageTemplate ||
-    "مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية بتاريخ {date}.";
+  const nextDate = p.nextVisit || "";
+  const template = appSettings.messageTemplate || "مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية القادم بتاريخ {date}.";
 
   const message = template
     .replaceAll("{name}", p.name || "")
-    .replaceAll("{date}", date);
+    .replaceAll("{date}", nextDate);
 
-  window.open(
-    "https://wa.me/" + phone + "?text=" + encodeURIComponent(message),
-    "_blank",
-    "noopener"
-  );
+  window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(message), "_blank", "noopener");
 }
 
 $("whatsappButton").addEventListener("click", () => openWhatsApp(selectedPatient));
 
 $("settingsButton").addEventListener("click", () => {
   if (!isAdmin()) return;
-
   $("settingsSection").classList.toggle("hidden");
-
   if (!$("settingsSection").classList.contains("hidden")) {
     $("settingsSection").scrollIntoView({ behavior: "smooth" });
   }
@@ -897,31 +888,17 @@ $("settingsButton").addEventListener("click", () => {
 function fillSettings() {
   $("settingBarcode").checked = !!appSettings.barcodeEnabled;
   $("settingWhatsapp").checked = !!appSettings.whatsappEnabled;
-  $("settingAutoSend").checked = !!appSettings.autoSendEnabled;
-  $("settingSendTime").value = appSettings.sendTime || "09:00";
-  $("settingReminderDays").value = Number(appSettings.reminderDays ?? 1);
-  $("settingLeadHours").value = Number(appSettings.leadHours ?? 24);
   $("settingMessageTemplate").value = appSettings.messageTemplate || "";
-  $("settingMedicineInventory").checked = !!appSettings.medicineInventoryEnabled;
-  $("settingAppointmentInventory").checked = !!appSettings.appointmentInventoryEnabled;
-  $("settingStockMinimum").value = Number(appSettings.stockMinimum ?? 5);
 }
 
 async function loadSettings() {
   if (!currentUser || !db) return;
-
   try {
     const snap = await db.collection("appSettings").doc("main").get();
     if (snap.exists) appSettings = { ...appSettings, ...snap.data() };
     fillSettings();
   } catch (e) {
     console.warn("Settings unavailable", e);
-    if (isAdmin()) {
-      showMessage(
-        "تعذر تحميل الإعدادات. تأكد من نشر قواعد appSettings التي تسمح للمدير بالكتابة.",
-        "error"
-      );
-    }
   }
 }
 
@@ -934,35 +911,18 @@ $("saveSettingsButton").addEventListener("click", async () => {
   const next = {
     barcodeEnabled: $("settingBarcode").checked,
     whatsappEnabled: $("settingWhatsapp").checked,
-    autoSendEnabled: $("settingAutoSend").checked,
-    sendTime: $("settingSendTime").value || "09:00",
-    reminderDays: Math.max(0, Math.min(30, Number($("settingReminderDays").value || 0))),
-    leadHours: Math.max(0, Math.min(168, Number($("settingLeadHours").value || 0))),
     messageTemplate: $("settingMessageTemplate").value.slice(0, 2000),
-    medicineInventoryEnabled: $("settingMedicineInventory").checked,
-    appointmentInventoryEnabled: $("settingAppointmentInventory").checked,
-    stockMinimum: Math.max(0, Number($("settingStockMinimum").value || 0)),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     updatedBy: currentUser.email
   };
 
   $("saveSettingsButton").disabled = true;
-
   try {
     await db.collection("appSettings").doc("main").set(next, { merge: true });
     appSettings = { ...appSettings, ...next };
     renderPatients();
-
     if (selectedPatient) showProfile(selectedPatient);
-
     showMessage("تم حفظ الإعدادات بنجاح.", "success");
-
-    if (next.autoSendEnabled) {
-      showMessage(
-        "تم حفظ الخيار، لكن الإرسال التلقائي لن يعمل قبل إعداد خادم مجدول وWhatsApp Business API.",
-        "error"
-      );
-    }
   } catch (e) {
     displayError(e, "حفظ إعدادات البرنامج");
   } finally {
