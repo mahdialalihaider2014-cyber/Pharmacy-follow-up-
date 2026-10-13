@@ -43,7 +43,9 @@ button:disabled{opacity:.55;cursor:wait}
 .notice{padding:11px 13px;border-radius:10px;margin:10px 0;background:#edf7f8}
 .notice.error{background:#fff0ee;color:#8b1e16}
 .notice.success{background:#eaf8ef;color:#17633b}
-.inventory-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.inventory-filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px;background:#edf7f9;padding:10px;border-radius:12px}
+.custom-days-wrap{display:flex;gap:4px;align-items:center;margin-inline-start:auto}
+.custom-days-wrap input{width:90px;padding:6px 8px;font-size:.88rem}
 #barcodeWrap{text-align:center;padding:14px;background:white;border:1px dashed var(--border);border-radius:12px;margin-top:12px}
 #barcodeSvg{max-width:100%;height:auto}
 footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 26px}
@@ -53,6 +55,8 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 2
 .patient-actions{justify-content:flex-start;width:100%}
 main{padding:10px}
 .card{padding:14px}
+.custom-days-wrap{width:100%;margin-top:6px}
+.custom-days-wrap input{flex:1}
 }
 @media print{
 body{background:#fff}
@@ -165,14 +169,20 @@ body *{visibility:hidden!important}
         <input id="search" placeholder="ابحث بالاسم أو الهاتف أو الباركود">
         <span id="patientCount" class="muted"></span>
       </div>
+
       <div class="inventory-filters" id="inventoryFilters">
-        <button class="small secondary" data-filter="all">الكل</button>
-        <button class="small secondary" data-filter="0">مراجعات اليوم</button>
-        <button class="small secondary" data-filter="3">متبقي ≤ 3 أيام</button>
-        <button class="small secondary" data-filter="7">متبقي ≤ 7 أيام</button>
-        <button class="small secondary" data-filter="30">متبقي ≤ 30 يوماً</button>
+        <button class="small" data-filter="all">الكل</button>
+        <button class="small secondary" data-filter="0">اليوم</button>
+        <button class="small secondary" data-filter="3">≤ 3 أيام</button>
+        <button class="small secondary" data-filter="7">≤ 7 أيام</button>
         <button class="small danger" data-filter="overdue">متأخرون</button>
+        
+        <div class="custom-days-wrap">
+          <input id="customDaysInput" type="number" min="0" max="365" placeholder="عدد الأيام">
+          <button id="applyCustomDaysBtn" class="small secondary" type="button">تطبيق</button>
+        </div>
       </div>
+
       <div id="patientList" class="patient-list"></div>
       <p id="emptyState" class="muted hidden">لا توجد نتائج.</p>
     </section>
@@ -576,13 +586,23 @@ function renderPatients() {
   });
 }
 
-document.querySelectorAll("#inventoryFilters button").forEach(btn => {
+document.querySelectorAll("#inventoryFilters button[data-filter]").forEach(btn => {
   btn.addEventListener("click", e => {
     document.querySelectorAll("#inventoryFilters button").forEach(b => b.classList.add("secondary"));
     btn.classList.remove("secondary");
     currentFilter = btn.dataset.filter;
+    $("customDaysInput").value = "";
     renderPatients();
   });
+});
+
+$("applyCustomDaysBtn").addEventListener("click", () => {
+  const customVal = $("customDaysInput").value.trim();
+  if (customVal !== "" && !isNaN(customVal) && parseInt(customVal) >= 0) {
+    document.querySelectorAll("#inventoryFilters button").forEach(b => b.classList.add("secondary"));
+    currentFilter = customVal;
+    renderPatients();
+  }
 });
 
 $("search").addEventListener("input", renderPatients);
