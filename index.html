@@ -18,7 +18,9 @@ button{font:inherit;font-weight:650;border:0;border-radius:10px;padding:10px 14p
 #barcodeSvg{display:block;width:auto;max-width:100%;margin:8px auto}
 .scan-help{margin:0 0 10px;padding:9px 12px;background:#edf7f8;border-radius:9px;font-size:.9rem;color:#17434d}
 .photo-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:10px;margin-top:10px}.medicine-photo-card{border:1px solid var(--border);border-radius:10px;padding:7px;background:#fff;min-width:0}.medicine-photo-card img{display:block;width:100%;height:105px;object-fit:contain;background:#f5f8f9;border-radius:7px}.medicine-photo-card button{width:100%;margin-top:6px}.profile-photos{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}.profile-photos img{width:min(180px,45%);max-height:220px;object-fit:contain;border:1px solid var(--border);border-radius:10px;background:#fff;padding:4px}
-@media print{#printArea svg{width:auto!important;max-width:100%!important;height:auto!important}}.patient-list{display:grid;gap:9px}.patient{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--border);border-radius:12px;padding:12px}.patient-info{min-width:0}.patient-info strong{display:block}.patient-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media print{#printArea svg{width:auto!important;max-width:100%!important;height:auto!important}}
+@media print{#printArea.barcode-label-print{position:absolute!important;inset:0 auto auto 0!important;width:55mm!important;height:28mm!important;min-height:28mm!important;padding:1mm!important;margin:0!important;overflow:hidden!important;display:block!important;text-align:center!important;background:#fff!important;color:#000!important;border:0!important}#printArea.barcode-label-print h3{font-size:7pt!important;font-weight:600!important;line-height:1!important;margin:0 0 1mm!important;padding:0!important}#printArea.barcode-label-print svg{display:block!important;width:49mm!important;height:19mm!important;max-width:49mm!important;margin:0 auto!important}}
+.patient-list{display:grid;gap:9px}.patient{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--border);border-radius:12px;padding:12px}.patient-info{min-width:0}.patient-info strong{display:block}.patient-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.profile-item{background:#f5f9fa;border-radius:10px;padding:10px;overflow-wrap:anywhere}.profile-item strong{display:block;color:var(--dark)}
 .table-wrap{overflow-x:auto}.data-table{width:100%;border-collapse:collapse;min-width:650px}.data-table th,.data-table td{border:1px solid var(--border);padding:8px;text-align:right}.data-table th{background:#edf5f7}.tag{display:inline-block;padding:3px 8px;border-radius:20px;background:#e5eff2;font-size:.85rem}.notice{padding:11px 13px;border-radius:10px;margin:10px 0;background:#edf7f8}.notice.error{background:#fff0ee;color:#8b1e16}.notice.success{background:#eaf8ef;color:#17633b}
 #barcodeWrap{text-align:center;padding:14px;background:white;border:1px dashed var(--border);border-radius:12px;margin-top:12px}#barcodeSvg{max-width:100%;height:auto}
@@ -28,50 +30,23 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 2
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <h1 id="appTitle">متابعة مرضى الصيدلية</h1>
-    <p id="subtitle">إدارة بيانات المرضى والمراجعات</p>
-  </div>
-</header>
+<header><div class="wrap"><h1 id="appTitle">متابعة مرضى الصيدلية</h1><p id="subtitle">إدارة بيانات المرضى والمراجعات</p></div></header>
 <main>
   <div id="message" class="notice hidden" role="status"></div>
   <section id="loginCard" class="card">
     <h2 id="loginHeading">تسجيل الدخول</h2>
     <div class="grid">
-      <div class="field full">
-        <label for="email" id="emailLabel">البريد الإلكتروني</label>
-        <input id="email" type="email" autocomplete="username" required>
-      </div>
-      <div class="field full">
-        <label for="password" id="passwordLabel">كلمة المرور</label>
-        <input id="password" type="password" autocomplete="current-password" required>
-      </div>
+      <div class="field full"><label for="email" id="emailLabel">البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" required></div>
+      <div class="field full"><label for="password" id="passwordLabel">كلمة المرور</label><input id="password" type="password" autocomplete="current-password" required></div>
     </div>
-    <div class="actions">
-      <button id="loginButton" type="button">دخول</button>
-      <button id="languageButton" type="button" class="secondary">English</button>
-    </div>
+    <div class="actions"><button id="loginButton" type="button">دخول</button><button id="languageButton" type="button" class="secondary">English</button></div>
     <p class="muted">يجب إنشاء حساب الدخول أولًا من Firebase Authentication.</p>
   </section>
 
   <section id="appSection" class="hidden">
     <section class="card">
-      <div class="toolbar">
-        <div style="flex:1">
-          <strong id="welcome"></strong>
-          <div class="muted" id="roleLabel"></div>
-        </div>
-        <button id="languageButtonApp" class="secondary">English</button>
-        <button id="logoutButton" class="secondary">تسجيل الخروج</button>
-      </div>
-      <div class="actions">
-        <button id="newPatientButton">إضافة مريض</button>
-        <button id="refreshButton" class="secondary">تحديث القائمة</button>
-        <button id="followupButton" class="secondary">متابعة حسب الموعد</button>
-        <button id="inventoryButton" class="secondary">جرد الأدوية</button>
-        <button id="settingsButton" class="secondary hidden">إعدادات المدير</button>
-      </div>
+      <div class="toolbar"><div style="flex:1"><strong id="welcome"></strong><div class="muted" id="roleLabel"></div></div><button id="languageButtonApp" class="secondary">English</button><button id="logoutButton" class="secondary">تسجيل الخروج</button></div>
+      <div class="actions"><button id="newPatientButton">إضافة مريض</button><button id="refreshButton" class="secondary">تحديث القائمة</button><button id="followupButton" class="secondary">متابعة حسب الموعد</button><button id="inventoryButton" class="secondary">جرد الأدوية</button><button id="settingsButton" class="secondary hidden">إعدادات المدير</button></div>
     </section>
 
     <section id="patientFormCard" class="card hidden">
@@ -82,7 +57,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 2
           <div class="field"><label for="patientName" data-ar="اسم المريض" data-en="Patient name">اسم المريض</label><input id="patientName" required maxlength="160"></div>
           <div class="field"><label for="patientPhone" data-ar="رقم الهاتف" data-en="Phone number">رقم الهاتف</label><input id="patientPhone" required maxlength="40" inputmode="tel"></div>
           <div class="field"><label for="disease" data-ar="الحالة/المرض" data-en="Condition">الحالة/المرض</label><input id="disease" maxlength="300"></div>
-          <div class="field"><label for="patientBarcode" data-ar="رمز الباركود (اتركه فارغًا للتوليد)" data-en="Barcode (leave blank to generate)">رمز الباركود (اتركه فارغًا للتوليد)</label><input id="patientBarcode" maxlength="120"></div>
+          <div class="field"><label for="patientBarcode" data-ar="باركود رقمي من 13 رقمًا (اتركه فارغًا للتوليد)" data-en="13-digit numeric barcode (leave blank to generate)">باركود رقمي من 13 رقمًا (اتركه فارغًا للتوليد)</label><input id="patientBarcode" maxlength="13" inputmode="numeric" pattern="[0-9]{13}" placeholder="13 رقمًا فقط"></div>
           <div class="field"><label for="followUpDays" data-ar="أيام المتابعة" data-en="Follow-up days">أيام المتابعة</label><input id="followUpDays" type="number" min="0" max="3650" value="30"></div>
           <div class="field"><label for="lastVisit" data-ar="تاريخ آخر مراجعة" data-en="Last visit">تاريخ آخر مراجعة</label><input id="lastVisit" type="date"></div>
           <div class="field full"><label for="medicines" data-ar="الأدوية (اسم الدواء والجرعة)" data-en="Medicines (name and dose)">الأدوية (اسم الدواء والجرعة)</label><textarea id="medicines" placeholder="اسم الدواء — الجرعة — عدد المرات"></textarea></div>
@@ -95,12 +70,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 2
 
     <section class="card">
       <h2 id="patientsHeading">قائمة المرضى</h2>
-      <div class="toolbar">
-        <input id="search" placeholder="ابحث بالاسم أو الهاتف أو امسح الباركود" autocomplete="off">
-        <button id="activateScannerButton" type="button" class="secondary">تفعيل قارئ الباركود</button>
-        <span id="patientCount" class="muted"></span>
-      </div>
-      <p class="scan-help" id="scannerHelp">للمسح: اضغط «تفعيل قارئ الباركود» أولًا، ثم امسح الرمز. يجب أن يكتب القارئ الرقم في خانة البحث. إذا لم يظهر رقم في أي حقل كتابة، افحص اتصال القارئ وإعداداته.</p>
+      <div class="toolbar"><input id="search" placeholder="ابحث بالاسم أو الهاتف أو امسح الباركود" autocomplete="off"><button id="activateScannerButton" type="button" class="secondary">تفعيل قارئ الباركود</button><span id="patientCount" class="muted"></span></div><p class="scan-help" id="scannerHelp">للمسح: اضغط «تفعيل قارئ الباركود» أولًا، ثم امسح الرمز. يجب أن يكتب القارئ الرقم في خانة البحث. إذا لم يظهر رقم في أي حقل كتابة، افحص اتصال القارئ وإعداداته.</p>
       <div id="patientList" class="patient-list"></div>
       <p id="emptyState" class="muted hidden">لا توجد نتائج.</p>
     </section>
@@ -120,9 +90,10 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 2
     </section>
 
     <section id="followupSection" class="card hidden">
-      <div class="toolbar"><h2 style="flex:1">متابعة المواعيد</h2><button id="closeFollowupButton" class="secondary">إغلاق</button></div>
+      <div class="toolbar"><h2 style="flex:1">متابعة المرضى حسب موعد المراجعة</h2><button id="closeFollowupButton" class="secondary">إغلاق</button></div>
+      <p class="muted">يُحسب موعد المراجعة المتوقع من تاريخ آخر مراجعة + أيام المتابعة المسجلة لكل مريض. المرضى الذين لا يملكون تاريخ آخر مراجعة لن يظهروا ضمن الفئات حتى يُضاف التاريخ.</p>
       <div class="grid">
-        <div class="field"><label for="followupFilterDate">تاريخ المراجعة</label><input id="followupFilterDate" type="date"></div>
+        <div class="field"><label for="followupFilterDate">عرض الموعد في تاريخ (اختياري)</label><input id="followupFilterDate" type="date"></div>
         <div class="field"><label for="followupCategorySelect">الفئة</label><select id="followupCategorySelect"><option value="all">كل الفئات</option><option value="due">المستحقون اليوم والمتأخرون</option><option value="one">الفئة الأولى</option><option value="two">الفئة الثانية</option></select></div>
       </div>
       <div class="actions"><button id="refreshFollowupButton">تحديث المتابعة</button><button id="printFollowupButton" class="secondary">طباعة قائمة المتابعة</button></div>
@@ -130,7 +101,8 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:10px 16px 2
       <div id="followupList" class="patient-list"></div>
       <p id="followupEmpty" class="muted hidden">لا يوجد مرضى في هذه الفئة وفق الإعدادات الحالية.</p>
     </section>
-        <section id="inventorySection" class="card hidden">
+
+    <section id="inventorySection" class="card hidden">
       <div class="toolbar"><h2 style="flex:1">جرد الأدوية</h2><button id="closeInventoryButton" class="secondary">إغلاق</button></div>
       <p class="muted">أدخل بيانات الأدوية والكميات يدويًا. تاريخ السجل هو تاريخ آخر تحديث، ويمكن تصفية السجلات حسب الفترة. التعديل هنا يحدّث الرصيد مباشرة؛ احتفظ بسجل منفصل لحركات الصرف والوارد إذا كنت تحتاج تدقيقًا محاسبيًا كاملًا.</p>
       <form id="inventoryForm">
@@ -209,7 +181,7 @@ let appSettings={
   messageTemplate:"مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية بتاريخ {date}. للاستفسار يرجى التواصل معنا.\nأهلًا {name}، نرجو التواصل مع الصيدلية بخصوص موعد المراجعة بتاريخ {date}.\nمرحبًا {name}، نطمئن على صحتكم ونذكّركم بموعد المراجعة بتاريخ {date}.",
   medicineInventoryEnabled:true, appointmentInventoryEnabled:true, stockMinimum:5
 };
-const translations={
+  const translations={
  ar:{title:"متابعة مرضى الصيدلية",subtitle:"إدارة بيانات المرضى والمراجعات",login:"تسجيل الدخول",email:"البريد الإلكتروني",password:"كلمة المرور",enter:"دخول",logout:"تسجيل الخروج",add:"إضافة مريض",refresh:"تحديث القائمة",patients:"قائمة المرضى",search:"ابحث بالاسم أو الهاتف أو الباركود",profile:"ملف المريض",name:"اسم المريض",phone:"رقم الهاتف",disease:"الحالة/المرض",barcode:"الباركود",days:"أيام المتابعة",visit:"تاريخ آخر مراجعة",medicines:"الأدوية",notes:"ملاحظات",save:"حفظ المريض",update:"حفظ التعديلات",cancel:"إلغاء",close:"إغلاق",edit:"تعديل",delete:"حذف المريض",print:"طباعة الملف",printBarcode:"طباعة الباركود فقط",generate:"توليد/حفظ الباركود",whatsapp:"تواصل واتساب",empty:"لا توجد نتائج.",confirmDelete:"هل أنت متأكد من حذف هذا المريض؟",saved:"تم حفظ بيانات المريض.",updated:"تم تحديث بيانات المريض.",deleted:"تم حذف المريض.",needLogin:"يجب تسجيل الدخول أولًا.",required:"يرجى إدخال اسم المريض ورقم الهاتف.",admin:"مدير",employee:"موظف"},
  en:{title:"Pharmacy Patient Follow-up",subtitle:"Patient records and follow-up management",login:"Sign in",email:"Email",password:"Password",enter:"Sign in",logout:"Sign out",add:"Add patient",refresh:"Refresh list",patients:"Patients",search:"Search name, phone, or barcode",profile:"Patient profile",name:"Patient name",phone:"Phone number",disease:"Condition",barcode:"Barcode",days:"Follow-up days",visit:"Last visit",medicines:"Medicines",notes:"Notes",save:"Save patient",update:"Save changes",cancel:"Cancel",close:"Close",edit:"Edit",delete:"Delete patient",print:"Print profile",printBarcode:"Print barcode only",generate:"Generate/save barcode",whatsapp:"WhatsApp contact",empty:"No results.",confirmDelete:"Are you sure you want to delete this patient?",saved:"Patient saved.",updated:"Patient updated.",deleted:"Patient deleted.",needLogin:"Please sign in first.",required:"Enter the patient name and phone number.",admin:"Administrator",employee:"Employee"}
 };
@@ -241,7 +213,7 @@ function toggleLanguage(){
   $("generateBarcodeButton").textContent=t("generate");$("printBarcodeButton").textContent=t("printBarcode");
   $("whatsappButton").textContent=t("whatsapp");$("printProfileButton").textContent=t("print");$("editPatientButton").textContent=t("edit");
   $("deletePatientButton").textContent=t("delete");$("cancelFormButton").textContent=t("cancel");
-    $("languageButton").textContent=language==="ar"?"English":"العربية";$("languageButtonApp").textContent=language==="ar"?"English":"العربية";
+  $("languageButton").textContent=language==="ar"?"English":"العربية";$("languageButtonApp").textContent=language==="ar"?"English":"العربية";
   document.querySelectorAll("label[data-ar]").forEach(el=>el.textContent=language==="ar"?el.dataset.ar:el.dataset.en);
   renderPatients();
 }
@@ -290,14 +262,19 @@ function isValidEan13(value){
   return (10-(sum%10))%10===Number(s[12]);
 }
 function makeEan13(){
-  let base="";
+  let code="";
   do{
-    base="2"+String(Date.now()).slice(-8)+String(Math.floor(Math.random()*1000)).padStart(3,"0");
-  }while(patients.some(p=>String(p.barcode||"")===base));
-  let sum=0;for(let i=0;i<12;i++)sum+=Number(base[i])*(i%2===0?1:3);
-  return base+String((10-(sum%10))%10);
+    // باركود EAN-13: أرقام فقط مع رقم تحقق في النهاية.
+    const base="2"+String(Date.now()).slice(-8)+String(Math.floor(Math.random()*1000)).padStart(3,"0");
+    let sum=0;for(let i=0;i<12;i++)sum+=Number(base[i])*(i%2===0?1:3);
+    code=base+String((10-(sum%10))%10);
+  }while(patients.some(p=>String(p.barcode||"")===code));
+  return code;
 }
-function barcodeFormat(value){return isValidEan13(value)?"EAN13":"CODE128";}
+function barcodeFormat(value){return "EAN13";}
+function normalizeBarcodeDigits(value){
+  return String(value||"").replace(/[٠-٩]/g,d=>String("٠١٢٣٤٥٦٧٨٩".indexOf(d))).replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).trim();
+}
 function renderMedicinePhotoPreview(){
   const wrap=$("medicinePhotoPreview");if(!wrap)return;wrap.innerHTML="";
   editingMedicinePhotos.forEach((src,index)=>{
@@ -308,7 +285,7 @@ function renderMedicinePhotoPreview(){
     card.append(img,btn);wrap.append(card);
   });
   const files=Array.from($("medicinePhotos").files||[]);
-  files.forEach(file=>{
+  files.forEach((file,index)=>{
     const card=document.createElement("div");card.className="medicine-photo-card";
     const img=document.createElement("img");img.alt=file.name;img.src=URL.createObjectURL(file);
     const label=document.createElement("div");label.className="muted";label.textContent=file.name;
@@ -326,7 +303,8 @@ function compressMedicineImage(file){
       const img=new Image();img.onerror=()=>reject(new Error("تعذر فتح الصورة. جرّب صورة JPG أو PNG."));
       img.onload=()=>{
         let scale=Math.min(1,900/Math.max(img.width,img.height));
-        const canvas=document.createElement("canvas");let data="";
+        const canvas=document.createElement("canvas");
+        let data="";
         for(let pass=0;pass<5;pass++){
           canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
           const ctx=canvas.getContext("2d");ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
@@ -341,7 +319,7 @@ function compressMedicineImage(file){
     reader.readAsDataURL(file);
   });
 }
-$("medicinePhotos").addEventListener("change",()=>{
+  $("medicinePhotos").addEventListener("change",()=>{
   const files=Array.from($("medicinePhotos").files||[]);
   if(files.length+editingMedicinePhotos.length>3){showMessage("يمكن حفظ 3 صور أدوية كحد أقصى للمريض. أزل بعض الصور ثم حاول مجددًا.","error");$("medicinePhotos").value="";}
   renderMedicinePhotoPreview();
@@ -369,13 +347,15 @@ function renderPatients(){
 }
 $("search").addEventListener("input",renderPatients);
 $("activateScannerButton").addEventListener("click",()=>{
-  $("search").focus();$("search").select();
+  $("search").focus();
+  $("search").select();
   showMessage("قارئ الباركود جاهز. امسح الرمز الآن؛ يجب أن يظهر رقمه في خانة البحث.","success");
 });
 $("search").addEventListener("keydown",event=>{
   if(event.key!=="Enter")return;
   event.preventDefault();
-  const scanned=normalizeScanValue($("search").value);if(!scanned)return;
+  const scanned=normalizeScanValue($("search").value);
+  if(!scanned)return;
   const found=patients.find(p=>normalizeScanValue(patientBarcodeValue(p))===scanned||normalizeScanValue(p.id)===scanned);
   if(found){showProfile(found);showMessage("تم العثور على ملف المريض: "+(found.name||""),"success");}
   else{renderPatients();showMessage("لم يُعثر على مريض يطابق الرمز المقروء. تأكد أن الرقم المقروء يطابق قيمة الباركود المحفوظة للمريض.","error");}
@@ -384,12 +364,13 @@ $("refreshButton").addEventListener("click",loadPatients);
 $("newPatientButton").addEventListener("click",()=>{resetPatientForm();$("patientFormCard").classList.remove("hidden");$("patientFormCard").scrollIntoView({behavior:"smooth"});});
 function resetPatientForm(){
   $("patientForm").reset();$("patientId").value="";$("followUpDays").value="30";editingMedicinePhotos=[];renderMedicinePhotoPreview();
-  $("patientFormTitle").textContent=t("add");$("savePatientButton").textContent=t("save");$("patientFormCard").classList.add("hidden");
+  $("patientFormTitle").textContent=t("add");$("savePatientButton").textContent=t("save");
+  $("patientFormCard").classList.add("hidden");
 }
 $("cancelFormButton").addEventListener("click",resetPatientForm);
 function fillPatientForm(p){
   $("patientId").value=p.id;$("patientName").value=p.name||"";$("patientPhone").value=p.phone||"";
-  $("disease").value=p.disease||"";$("patientBarcode").value=p.barcode||"";
+  $("disease").value=p.disease||"";$("patientBarcode").value=isValidEan13(p.barcode)?p.barcode:"";
   $("followUpDays").value=Number(p.followUpDays??30);$("lastVisit").value=p.lastVisit||"";
   $("medicines").value=p.medicines||"";$("notes").value=p.notes||"";
   editingMedicinePhotos=Array.isArray(p.medicinePhotos)?p.medicinePhotos.slice(0,3):[];$("medicinePhotos").value="";renderMedicinePhotoPreview();
@@ -402,29 +383,34 @@ $("patientForm").addEventListener("submit",async e=>{
   if(!currentUser){showMessage(t("needLogin"),"error");return;}
   const id=$("patientId").value,name=$("patientName").value.trim(),phone=$("patientPhone").value.trim();
   if(!name||!phone){showMessage(t("required"),"error");return;}
-  const old=patients.find(p=>p.id===id),pickedFiles=Array.from($("medicinePhotos").files||[]);
+  const old=patients.find(p=>p.id===id);
+  const pickedFiles=Array.from($("medicinePhotos").files||[]);
   if(editingMedicinePhotos.length+pickedFiles.length>3){showMessage("الحد الأقصى 3 صور أدوية للمريض.","error");return;}
   $("savePatientButton").disabled=true;
   try{
     const compressedPhotos=await Promise.all(pickedFiles.map(compressMedicineImage));
     const medicinePhotos=[...editingMedicinePhotos,...compressedPhotos];
     const totalPhotoChars=medicinePhotos.reduce((n,x)=>n+String(x).length,0);
-    if(totalPhotoChars>360000)throw new Error("مجموع الصور أكبر من الحد الآمن للحفظ. احذف صورة أو اختر صورًا أصغر.");
+    if(totalPhotoChars>360000){throw new Error("مجموع الصور أكبر من الحد الآمن للحفظ. احذف صورة أو اختر صورًا أصغر.");}
+    const enteredBarcode=normalizeBarcodeDigits($("patientBarcode").value);
+    if(enteredBarcode&&!isValidEan13(enteredBarcode))throw new Error("الباركود يجب أن يتكون من 13 رقمًا صحيحًا فقط، أو اترك الحقل فارغًا ليولّد البرنامج باركودًا تلقائيًا.");
+    const oldBarcode=old&&isValidEan13(old.barcode)?old.barcode:"";
     const data={
       name,phone,disease:$("disease").value.trim(),
-      barcode:$("patientBarcode").value.trim()||(old&&old.barcode)||"",
+      barcode:enteredBarcode||oldBarcode||"",
       followUpDays:Math.max(0,Number($("followUpDays").value||0)),
       lastVisit:$("lastVisit").value,medicines:$("medicines").value.trim(),notes:$("notes").value.trim(),
       medicinePhotos,updatedAt:firebase.firestore.FieldValue.serverTimestamp()
     };
-    if(id){await db.collection("patients").doc(id).update(data);showMessage(t("updated"),"success");}
+    if(id){if(!data.barcode)data.barcode=makeEan13();await db.collection("patients").doc(id).update(data);showMessage(t("updated"),"success");}
     else{
       if(!data.barcode)data.barcode=makeEan13();
       data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection("patients").add(data);showMessage(t("saved"),"success");
+      await db.collection("patients").add(data);
+      showMessage(t("saved"),"success");
     }
     resetPatientForm();await loadPatients();
-      }catch(e){displayError(e,"حفظ بيانات المريض أو الصور");}
+  }catch(e){displayError(e,"حفظ بيانات المريض أو الصور");}
   finally{$("savePatientButton").disabled=false;}
 });
 function showProfile(p){
@@ -449,7 +435,8 @@ function renderBarcode(value){
   try{
     if(!window.JsBarcode)throw new Error("لم يتم تحميل مكتبة الباركود. تحقق من اتصال الإنترنت ثم أعد تحميل الصفحة.");
     if(!code)throw new Error("لا توجد قيمة لإنشاء الباركود.");
-    JsBarcode(svg,code,{format:barcodeFormat(code),displayValue:true,width:3.2,height:110,margin:28,background:"#ffffff",lineColor:"#000000",font:"Arial",fontSize:18,textMargin:10});
+    if(!isValidEan13(code))throw new Error("هذا المريض لا يملك باركودًا رقميًا صحيحًا. اضغط «توليد/حفظ الباركود» أولًا.");
+    JsBarcode(svg,code,{format:"EAN13",displayValue:true,width:1.35,height:36,margin:2,background:"#ffffff",lineColor:"#000000",font:"Arial",fontSize:9,textMargin:2});
   }catch(e){displayError(e,"إنشاء الباركود");}
 }
 $("closeProfileButton").addEventListener("click",()=>$("profileSection").classList.add("hidden"));
@@ -472,14 +459,18 @@ $("generateBarcodeButton").addEventListener("click",async()=>{
     showMessage(isValidEan13(existing)?"تم الاحتفاظ بالباركود الرقمي الحالي.":"تم إنشاء باركود رقمي EAN-13 جديد وحفظه للمريض. اطبع الملصق الجديد بدل القديم.","success");
   }catch(e){displayError(e,"حفظ باركود المريض");}
 });
-$("printBarcodeButton").addEventListener("click",()=>{
+  $("printBarcodeButton").addEventListener("click",()=>{
   if(!selectedPatient)return;
-  const area=$("printArea");area.innerHTML="";
+  const area=$("printArea");area.innerHTML="";area.classList.add("barcode-label-print");
   const h=document.createElement("h3");h.textContent=selectedPatient.name||"";
-  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");area.append(h,svg);
-  try{JsBarcode(svg,patientBarcodeValue(selectedPatient),{format:barcodeFormat(patientBarcodeValue(selectedPatient)),displayValue:true,width:3.4,height:115,margin:30,background:"#ffffff",lineColor:"#000000",font:"Arial",fontSize:20,textMargin:10});}
-  catch(e){displayError(e,"طباعة الباركود");return;}
-  area.classList.remove("hidden");window.print();setTimeout(()=>area.classList.add("hidden"),700);
+  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  area.append(h,svg);
+  const code=patientBarcodeValue(selectedPatient);
+  try{
+    if(!isValidEan13(code))throw new Error("هذا المريض لا يملك باركودًا رقميًا صحيحًا. اضغط «توليد/حفظ الباركود» أولًا.");
+    JsBarcode(svg,code,{format:"EAN13",displayValue:true,width:1.35,height:36,margin:2,background:"#ffffff",lineColor:"#000000",font:"Arial",fontSize:9,textMargin:2});
+  }catch(e){area.classList.remove("barcode-label-print");displayError(e,"طباعة الباركود");return;}
+  area.classList.remove("hidden");window.print();setTimeout(()=>{area.classList.add("hidden");area.classList.remove("barcode-label-print");},1000);
 });
 $("printProfileButton").addEventListener("click",()=>{
   if(!selectedPatient)return;
@@ -487,7 +478,7 @@ $("printProfileButton").addEventListener("click",()=>{
   const h=document.createElement("h2");h.textContent=t("profile");area.append(h);
   [[t("name"),selectedPatient.name],[t("phone"),selectedPatient.phone],[t("disease"),selectedPatient.disease],[t("barcode"),selectedPatient.barcode||selectedPatient.id],[t("days"),selectedPatient.followUpDays],[t("visit"),selectedPatient.lastVisit],[t("medicines"),selectedPatient.medicines],[t("notes"),selectedPatient.notes]].forEach(([k,v])=>{const p=document.createElement("p");const b=document.createElement("strong");b.textContent=k+": ";p.append(b,document.createTextNode(v==null?"":String(v)));area.append(p);});
   const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");area.append(svg);
-  try{JsBarcode(svg,patientBarcodeValue(selectedPatient),{format:barcodeFormat(patientBarcodeValue(selectedPatient)),displayValue:true,width:3.2,height:110,margin:28,background:"#ffffff",lineColor:"#000000",font:"Arial",fontSize:18,textMargin:10});}catch(e){}
+  try{const code=patientBarcodeValue(selectedPatient);if(isValidEan13(code))JsBarcode(svg,code,{format:"EAN13",displayValue:true,width:1.35,height:36,margin:2,background:"#ffffff",lineColor:"#000000",font:"Arial",fontSize:9,textMargin:2});}catch(e){}
   area.classList.remove("hidden");window.print();setTimeout(()=>area.classList.add("hidden"),700);
 });
 function openWhatsApp(p){
@@ -496,7 +487,8 @@ function openWhatsApp(p){
   if(phone.startsWith("00"))phone=phone.slice(2);
   else if(phone.startsWith("0"))phone="964"+phone.slice(1);
   else if(phone.startsWith("7"))phone="964"+phone;
-  const due=getDueDate(p),date=due?formatDate(due):"غير محدد";
+  const due=getDueDate(p);
+  const date=due?formatDate(due):"غير محدد";
   const templates=String(appSettings.messageTemplate||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
   if(!templates.length)templates.push("مرحبًا {name}، نذكّركم بموعد مراجعة الصيدلية بتاريخ {date}.");
   let chosen=templates[0];
@@ -508,7 +500,7 @@ function openWhatsApp(p){
     if(!Number.isInteger(n)||n<1||n>templates.length){showMessage("رقم القالب غير صحيح.","error");return;}
     chosen=templates[n-1];
   }
-  const message=chosen.replaceAll("{name}",p.name||"").replaceAll("{date}",date).replaceAll("{phone}",p.phone||"");
+  let message=chosen.replaceAll("{name}",p.name||"").replaceAll("{date}",date).replaceAll("{phone}",p.phone||"");
   const edited=prompt("يمكنك تعديل نص الرسالة قبل فتح واتساب:",message);
   if(edited===null)return;
   window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(edited),"_blank","noopener");
@@ -541,7 +533,7 @@ $("saveSettingsButton").addEventListener("click",async()=>{
   if(!isAdmin()){showMessage("هذه الصفحة متاحة للمدير فقط.","error");return;}
   const catOne=Math.max(1,Math.min(3650,Number($("settingFollowupDaysOne").value||1)));
   const catTwo=Math.max(1,Math.min(3650,Number($("settingFollowupDaysTwo").value||2)));
-  if(catOne===catTwo){showMessage("يجب أن يكون عدد أيام الفئة الأولى مختلفًا عن عدد أيام الفئة الثانية.","error");return;}
+  if(catOne===catTwo){showMessage("يجب أن يكون عدد أيام الفئة الأولى مختلفًا عن الفئة الثانية.","error");return;}
   const next={
     barcodeEnabled:$("settingBarcode").checked,whatsappEnabled:$("settingWhatsapp").checked,
     autoSendEnabled:$("settingAutoSend").checked,sendTime:$("settingSendTime").value||"09:00",
@@ -565,6 +557,7 @@ $("saveSettingsButton").addEventListener("click",async()=>{
   }catch(e){displayError(e,"حفظ إعدادات البرنامج");}
   finally{$("saveSettingsButton").disabled=false;}
 });
+// Date helpers use local calendar dates to avoid UTC date shifts.
 function parseLocalDate(value){
   if(!value)return null;
   const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -576,7 +569,7 @@ function addDays(date,days){const d=new Date(date.getFullYear(),date.getMonth(),
 function dateKey(date){if(!date)return "";return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");}
 function formatDate(date){return date?dateKey(date):"";}
 function dayDiff(dateA,dateB){const a=new Date(dateA.getFullYear(),dateA.getMonth(),dateA.getDate()).getTime();const b=new Date(dateB.getFullYear(),dateB.getMonth(),dateB.getDate()).getTime();return Math.round((a-b)/86400000);}
-  function getDueDate(p){const last=parseLocalDate(p&&p.lastVisit);if(!last)return null;return addDays(last,Number(p.followUpDays??30));}
+function getDueDate(p){const last=parseLocalDate(p&&p.lastVisit);if(!last)return null;return addDays(last,Number(p.followUpDays??30));}
 function categoryForPatient(p){const due=getDueDate(p);if(!due)return "unscheduled";const diff=dayDiff(due,new Date());if(diff<=0)return "due";if(diff===Number(appSettings.followupCategory1Days??1))return "one";if(diff===Number(appSettings.followupCategory2Days??2))return "two";return "other";}
 function openFollowup(){$("followupSection").classList.remove("hidden");$("inventorySection").classList.add("hidden");renderFollowup();$("followupSection").scrollIntoView({behavior:"smooth"});}
 $("followupButton").addEventListener("click",openFollowup);
@@ -586,16 +579,10 @@ $("followupCategorySelect").addEventListener("change",renderFollowup);
 $("followupFilterDate").addEventListener("change",renderFollowup);
 function renderFollowup(){
   const list=$("followupList");if(!list)return;list.innerHTML="";
-  const selected=$("followupCategorySelect").value||"all",filterDate=$("followupFilterDate").value;
+  const selected=$("followupCategorySelect").value||"all", filterDate=$("followupFilterDate").value;
   const today=new Date();
   let rows=patients.map(p=>({p,due:getDueDate(p)})).filter(x=>x.due);
-  rows=rows.filter(x=>{
-    const diff=dayDiff(x.due,today);
-    const cat=diff<=0?"due":diff===Number(appSettings.followupCategory1Days??1)?"one":diff===Number(appSettings.followupCategory2Days??2)?"two":"other";
-    if(selected!=="all"&&cat!==selected)return false;
-    if(filterDate&&dateKey(x.due)!==filterDate)return false;
-    return true;
-  });
+  rows=rows.filter(x=>{const diff=dayDiff(x.due,today);let cat=diff<=0?"due":diff===Number(appSettings.followupCategory1Days??1)?"one":diff===Number(appSettings.followupCategory2Days??2)?"two":"other";if(selected!=="all"&&cat!==selected)return false;if(filterDate&&dateKey(x.due)!==filterDate)return false;return true;});
   rows.sort((a,b)=>a.due-b.due||String(a.p.name||"").localeCompare(String(b.p.name||""),"ar"));
   const dueCount=patients.filter(p=>{const d=getDueDate(p);return d&&dayDiff(d,today)<=0;}).length;
   const oneCount=patients.filter(p=>{const d=getDueDate(p);return d&&dayDiff(d,today)===Number(appSettings.followupCategory1Days??1);}).length;
@@ -616,124 +603,39 @@ function renderFollowup(){
   });
 }
 $("printFollowupButton").addEventListener("click",()=>{
-  const area=$("printArea");area.innerHTML="";
-  const h=document.createElement("h2");h.textContent="قائمة متابعة المرضى";area.append(h);
-  const table=document.createElement("table");table.className="data-table";
-  const head=document.createElement("tr");
-  ["اسم المريض","الهاتف","موعد المراجعة","الحالة"].forEach(x=>{const th=document.createElement("th");th.textContent=x;head.append(th);});
-  table.append(head);
+  const area=$("printArea");area.innerHTML="";const h=document.createElement("h2");h.textContent="قائمة متابعة المرضى";area.append(h);
+  const table=document.createElement("table");table.className="data-table";const head=document.createElement("tr");["اسم المريض","الهاتف","موعد المراجعة","الحالة"].forEach(x=>{const th=document.createElement("th");th.textContent=x;head.append(th);});table.append(head);
   const selected=$("followupCategorySelect").value||"all",filterDate=$("followupFilterDate").value,today=new Date();
-  patients.map(p=>({p,due:getDueDate(p)})).filter(x=>x.due).filter(x=>{
-    const diff=dayDiff(x.due,today),cat=diff<=0?"due":diff===Number(appSettings.followupCategory1Days??1)?"one":diff===Number(appSettings.followupCategory2Days??2)?"two":"other";
-    return(selected==="all"||selected===cat)&&(!filterDate||dateKey(x.due)===filterDate);
-  }).forEach(({p,due})=>{
-    const tr=document.createElement("tr");
-    [p.name||"",p.phone||"",formatDate(due),dayDiff(due,today)<0?"متأخر":dayDiff(due,today)===0?"مستحق اليوم":"قبل الموعد"].forEach(x=>{const td=document.createElement("td");td.textContent=x;tr.append(td);});
-    table.append(tr);
-  });
+  patients.map(p=>({p,due:getDueDate(p)})).filter(x=>x.due).filter(x=>{const diff=dayDiff(x.due,today),cat=diff<=0?"due":diff===Number(appSettings.followupCategory1Days??1)?"one":diff===Number(appSettings.followupCategory2Days??2)?"two":"other";return(selected==="all"||selected===cat)&&(!filterDate||dateKey(x.due)===filterDate);}).forEach(({p,due})=>{const tr=document.createElement("tr");[p.name||"",p.phone||"",formatDate(due),dayDiff(due,today)<0?"متأخر":dayDiff(due,today)===0?"مستحق اليوم":"قبل الموعد"].forEach(x=>{const td=document.createElement("td");td.textContent=x;tr.append(td);});table.append(tr);});
   area.append(table);area.classList.remove("hidden");window.print();setTimeout(()=>area.classList.add("hidden"),700);
 });
 
-// جرد الأدوية — يحفظ البيانات في مجموعة medicineInventory.
-function openInventory(){
-  if(!appSettings.medicineInventoryEnabled){showMessage("قسم جرد الأدوية غير مفعّل من إعدادات المدير.","error");return;}
-  $("inventorySection").classList.remove("hidden");$("followupSection").classList.add("hidden");
-  loadInventory();$("inventorySection").scrollIntoView({behavior:"smooth"});
-}
+// Medicine inventory stored in Firestore collection: medicineInventory.
+function openInventory(){if(!appSettings.medicineInventoryEnabled){showMessage("قسم جرد الأدوية غير مفعّل من إعدادات المدير.","error");return;}$("inventorySection").classList.remove("hidden");$("followupSection").classList.add("hidden");loadInventory();$("inventorySection").scrollIntoView({behavior:"smooth"});}
 $("inventoryButton").addEventListener("click",openInventory);
 $("closeInventoryButton").addEventListener("click",()=>$("inventorySection").classList.add("hidden"));
 $("reloadInventoryButton").addEventListener("click",loadInventory);
 $("filterInventoryButton").addEventListener("click",renderInventory);
 $("inventorySearch").addEventListener("input",renderInventory);
-$("clearInventoryFilterButton").addEventListener("click",()=>{
-  $("inventorySearch").value="";$("inventoryFrom").value="";$("inventoryTo").value="";renderInventory();
-});
-function resetInventoryForm(){
-  $("inventoryForm").reset();$("inventoryId").value="";$("inventoryQuantity").value="0";
-  $("inventoryPurchasePrice").value="0";$("inventorySalePrice").value="0";$("saveInventoryButton").textContent="حفظ الدواء";
-}
+$("clearInventoryFilterButton").addEventListener("click",()=>{$("inventorySearch").value="";$("inventoryFrom").value="";$("inventoryTo").value="";renderInventory();});
+function resetInventoryForm(){$("inventoryForm").reset();$("inventoryId").value="";$("inventoryQuantity").value="0";$("inventoryPurchasePrice").value="0";$("inventorySalePrice").value="0";$("saveInventoryButton").textContent="حفظ الدواء";}
 $("cancelInventoryButton").addEventListener("click",resetInventoryForm);
-async function loadInventory(){
-  if(!db||!currentUser)return;
-  try{
-    const snap=await db.collection("medicineInventory").get();
-    inventoryItems=snap.docs.map(doc=>({id:doc.id,...doc.data()}));
-    inventoryItems.sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ar"));renderInventory();
-  }catch(e){displayError(e,"تحميل جرد الأدوية");}
-}
-function timestampDate(value){
-  if(!value)return null;
-  if(value.toDate)return value.toDate();
-  if(value.seconds)return new Date(value.seconds*1000);
-  const d=new Date(value);return Number.isNaN(d.getTime())?null:d;
-}
+async function loadInventory(){if(!db||!currentUser)return;try{const snap=await db.collection("medicineInventory").get();inventoryItems=snap.docs.map(doc=>({id:doc.id,...doc.data()}));inventoryItems.sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ar"));renderInventory();}catch(e){displayError(e,"تحميل جرد الأدوية");}}
+function timestampDate(value){if(!value)return null;if(value.toDate)return value.toDate();if(value.seconds)return new Date(value.seconds*1000);const d=new Date(value);return Number.isNaN(d.getTime())?null:d;}
 function renderInventory(){
-  const wrap=$("inventoryTableWrap");if(!wrap)return;wrap.innerHTML="";
-  const q=$("inventorySearch").value.trim().toLowerCase(),from=$("inventoryFrom").value,to=$("inventoryTo").value;
-  const rows=inventoryItems.filter(x=>{
-    if(![x.name,x.code,x.note].some(v=>String(v||"").toLowerCase().includes(q)))return false;
-    const dt=timestampDate(x.updatedAt),key=dt?dateKey(dt):"";
-    if(from&&(!key||key<from))return false;if(to&&(!key||key>to))return false;return true;
-  });
-  const total=rows.reduce((sum,x)=>sum+Number(x.quantity||0)*Number(x.purchasePrice||0),0);
-  const low=rows.filter(x=>Number(x.quantity||0)<=Number(appSettings.stockMinimum??5)).length;
-  $("inventorySummary").textContent="عدد الأدوية: "+rows.length+" | أصناف عند حد التنبيه أو أقل: "+low+" | قيمة المخزون بسعر الشراء: "+total.toLocaleString("en-US");
-  const table=document.createElement("table");table.className="data-table";
-  const head=document.createElement("tr");
-  ["اسم الدواء","الرمز","الكمية","الوحدة","شراء","بيع","الانتهاء","آخر تحديث","الإجراءات"].forEach(x=>{const th=document.createElement("th");th.textContent=x;head.append(th);});
-  table.append(head);
-  rows.forEach(x=>{
-    const tr=document.createElement("tr");
-    const vals=[x.name||"",x.code||"",Number(x.quantity||0),x.unit||"",Number(x.purchasePrice||0),Number(x.salePrice||0),x.expiryDate||"",timestampDate(x.updatedAt)?dateKey(timestampDate(x.updatedAt)):""];
-    vals.forEach((v,i)=>{
-      const td=document.createElement("td");td.textContent=String(v);
-      if(i===2&&Number(x.quantity||0)<=Number(appSettings.stockMinimum??5))td.style.color="var(--danger)";
-      tr.append(td);
-    });
-    const td=document.createElement("td");
-    const edit=document.createElement("button");edit.className="small secondary";edit.textContent="تعديل";edit.onclick=()=>editInventoryItem(x);
-    const del=document.createElement("button");del.className="small danger";del.textContent="حذف";del.onclick=()=>deleteInventoryItem(x);
-    td.append(edit,document.createTextNode(" "),del);tr.append(td);table.append(tr);
-  });
-  const container=document.createElement("div");container.className="table-wrap";container.append(table);wrap.append(container);
+ const wrap=$("inventoryTableWrap");if(!wrap)return;wrap.innerHTML="";const q=$("inventorySearch").value.trim().toLowerCase(),from=$("inventoryFrom").value,to=$("inventoryTo").value;
+ const rows=inventoryItems.filter(x=>{if(![x.name,x.code,x.note].some(v=>String(v||"").toLowerCase().includes(q)))return false;const dt=timestampDate(x.updatedAt);const key=dt?dateKey(dt):"";if(from&&(!key||key<from))return false;if(to&&(!key||key>to))return false;return true;});
+ const total=rows.reduce((sum,x)=>sum+Number(x.quantity||0)*Number(x.purchasePrice||0),0);const low=rows.filter(x=>Number(x.quantity||0)<=Number(appSettings.stockMinimum??5)).length;
+ $("inventorySummary").textContent="عدد الأدوية: "+rows.length+" | أصناف عند حد التنبيه أو أقل: "+low+" | قيمة المخزون بسعر الشراء: "+total.toLocaleString("en-US");
+ const table=document.createElement("table");table.className="data-table";const head=document.createElement("tr");["اسم الدواء","الرمز","الكمية","الوحدة","شراء","بيع","الانتهاء","آخر تحديث","الإجراءات"].forEach(x=>{const th=document.createElement("th");th.textContent=x;head.append(th);});table.append(head);
+ rows.forEach(x=>{const tr=document.createElement("tr");const vals=[x.name||"",x.code||"",Number(x.quantity||0),x.unit||"",Number(x.purchasePrice||0),Number(x.salePrice||0),x.expiryDate||"",(timestampDate(x.updatedAt)?dateKey(timestampDate(x.updatedAt)):"")];vals.forEach((v,i)=>{const td=document.createElement("td");td.textContent=String(v);if(i===2&&Number(x.quantity||0)<=Number(appSettings.stockMinimum??5))td.style.color="var(--danger)";tr.append(td);});const td=document.createElement("td");const edit=document.createElement("button");edit.className="small secondary";edit.textContent="تعديل";edit.onclick=()=>editInventoryItem(x);const del=document.createElement("button");del.className="small danger";del.textContent="حذف";del.onclick=()=>deleteInventoryItem(x);td.append(edit,document.createTextNode(" "),del);tr.append(td);table.append(tr);});
+ const container=document.createElement("div");container.className="table-wrap";container.append(table);wrap.append(container);
 }
-function editInventoryItem(x){
-  $("inventoryId").value=x.id;$("inventoryName").value=x.name||"";$("inventoryCode").value=x.code||"";
-  $("inventoryQuantity").value=Number(x.quantity||0);$("inventoryUnit").value=x.unit||"";
-  $("inventoryPurchasePrice").value=Number(x.purchasePrice||0);$("inventorySalePrice").value=Number(x.salePrice||0);
-  $("inventoryExpiry").value=x.expiryDate||"";$("inventoryNote").value=x.note||"";
-  $("saveInventoryButton").textContent="حفظ التعديل";$("inventoryForm").scrollIntoView({behavior:"smooth"});
-}
-async function deleteInventoryItem(x){
-  if(!confirm("هل تريد حذف الدواء "+(x.name||"")+" من الجرد؟"))return;
-  try{await db.collection("medicineInventory").doc(x.id).delete();showMessage("تم حذف الدواء من الجرد.","success");await loadInventory();}
-  catch(e){displayError(e,"حذف الدواء من الجرد");}
-}
-$("inventoryForm").addEventListener("submit",async e=>{
-  e.preventDefault();if(!currentUser)return;
-  const id=$("inventoryId").value,name=$("inventoryName").value.trim();
-  if(!name){showMessage("أدخل اسم الدواء.","error");return;}
-  const data={
-    name,code:$("inventoryCode").value.trim(),
-    quantity:Math.max(0,Number($("inventoryQuantity").value||0)),
-    unit:$("inventoryUnit").value.trim(),
-    purchasePrice:Math.max(0,Number($("inventoryPurchasePrice").value||0)),
-    salePrice:Math.max(0,Number($("inventorySalePrice").value||0)),
-    expiryDate:$("inventoryExpiry").value,note:$("inventoryNote").value.trim(),
-    updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:currentUser.email||""
-  };
-  try{
-    if(id){await db.collection("medicineInventory").doc(id).update(data);showMessage("تم تحديث بيانات الدواء.","success");}
-    else{data.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection("medicineInventory").add(data);showMessage("تمت إضافة الدواء إلى الجرد.","success");}
-    resetInventoryForm();await loadInventory();
-  }catch(e){displayError(e,"حفظ بيانات الجرد");}
-});
-$("printInventoryButton").addEventListener("click",()=>{
-  const area=$("printArea");area.innerHTML="";
-  const h=document.createElement("h2");h.textContent="تقرير جرد الأدوية";area.append(h);
-  area.append($("inventoryTableWrap").cloneNode(true));area.classList.remove("hidden");
-  window.print();setTimeout(()=>area.classList.add("hidden"),700);
-});
+function editInventoryItem(x){$("inventoryId").value=x.id;$("inventoryName").value=x.name||"";$("inventoryCode").value=x.code||"";$("inventoryQuantity").value=Number(x.quantity||0);$("inventoryUnit").value=x.unit||"";$("inventoryPurchasePrice").value=Number(x.purchasePrice||0);$("inventorySalePrice").value=Number(x.salePrice||0);$("inventoryExpiry").value=x.expiryDate||"";$("inventoryNote").value=x.note||"";$("saveInventoryButton").textContent="حفظ التعديل";$("inventoryForm").scrollIntoView({behavior:"smooth"});}
+async function deleteInventoryItem(x){if(!confirm("هل تريد حذف الدواء "+(x.name||"")+" من الجرد؟"))return;try{await db.collection("medicineInventory").doc(x.id).delete();showMessage("تم حذف الدواء من الجرد.","success");await loadInventory();}catch(e){displayError(e,"حذف الدواء من الجرد");}}
+$("inventoryForm").addEventListener("submit",async e=>{e.preventDefault();if(!currentUser)return;const id=$("inventoryId").value;const name=$("inventoryName").value.trim();if(!name){showMessage("أدخل اسم الدواء.","error");return;}const data={name,code:$("inventoryCode").value.trim(),quantity:Math.max(0,Number($("inventoryQuantity").value||0)),unit:$("inventoryUnit").value.trim(),purchasePrice:Math.max(0,Number($("inventoryPurchasePrice").value||0)),salePrice:Math.max(0,Number($("inventorySalePrice").value||0)),expiryDate:$("inventoryExpiry").value,note:$("inventoryNote").value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:currentUser.email||""};try{if(id){await db.collection("medicineInventory").doc(id).update(data);showMessage("تم تحديث بيانات الدواء.","success");}else{data.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection("medicineInventory").add(data);showMessage("تمت إضافة الدواء إلى الجرد.","success");}resetInventoryForm();await loadInventory();}catch(e){displayError(e,"حفظ بيانات الجرد");}});
+$("printInventoryButton").addEventListener("click",()=>{const area=$("printArea");area.innerHTML="";const h=document.createElement("h2");h.textContent="تقرير جرد الأدوية";area.append(h);const clone=$("inventoryTableWrap").cloneNode(true);area.append(clone);area.classList.remove("hidden");window.print();setTimeout(()=>area.classList.add("hidden"),700);});
+
 $("reloadSettingsButton").addEventListener("click",loadSettings);
 if(initFirebase()){
   auth.onAuthStateChanged(user=>{
