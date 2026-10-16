@@ -557,6 +557,7 @@ $("saveSettingsButton").addEventListener("click",async()=>{
   }catch(e){displayError(e,"حفظ إعدادات البرنامج");}
   finally{$("saveSettingsButton").disabled=false;}
 });
+
 // Date helpers use local calendar dates to avoid UTC date shifts.
 function parseLocalDate(value){
   if(!value)return null;
